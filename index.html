@@ -34,6 +34,11 @@ a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
 .rail a{display:flex;justify-content:space-between;padding:7px 10px;border-radius:6px;color:var(--text)}
 main{padding:22px 0 90px;min-width:0}
 .crumbs{color:var(--muted);font-size:13px}
+.pathbar{display:flex;flex-wrap:wrap;align-items:center;gap:2px 4px}.pbsep{color:var(--muted);padding:0 2px}
+.pbseg{position:relative}.pbseg summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:2px 7px;margin:0 -3px;border-radius:6px;color:var(--text);font-weight:500}.pbseg summary::-webkit-details-marker{display:none}
+.pbseg summary:hover,.pbseg[open] summary{background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);color:var(--accent)}.pbseg .chev{width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);opacity:.6}
+.pbmenu{position:absolute;top:calc(100% + 4px);left:-3px;z-index:40;min-width:200px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:5px;display:flex;flex-direction:column}
+.pbi{display:flex;flex-direction:column;align-items:flex-start;text-align:left;border:0;background:none;font:inherit;font-size:13.5px;color:var(--text);padding:6px 9px;border-radius:6px;cursor:pointer}.pbi:hover{background:var(--bg);color:var(--accent)}.pbi.on{color:var(--accent);font-weight:600}.pbi.soon{color:var(--muted);cursor:default}.pbi.soon .nyi{font-size:11px}
 h1{font-size:26px;letter-spacing:-.02em;margin:4px 0 2px;font-weight:600}
 .meta{color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:18px}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px}
@@ -750,7 +755,7 @@ const V = {
   const head=`<div class="crumbs">Operations / <b>Pushes</b> · <span class="badge q">illustrative numbers</span></div><h1>Push requests</h1><div class="meta"><span>BOB on ts12</span><span>21:42 ST · 22:42 your time</span></div>`;
   const villages=[['Food Storage',-53,-130,'Wild Club'],['BOB01',-52,-130,'Wild Club'],['B04',-51,-123,'bobo1'],['00',-53,-135,'Hutkyy'],['New village',-53,-128,'Král Králíčků'],['Bejzinkov',-55,-128,'Král Králíčků'],['Bertíkov',-54,-128,'Král Králíčků'],['Vemínkov',-49,-129,'Král Králíčků']];
   const form=`<section class="panel"><h2>New push request <small>BOB and confederacy villages</small></h2><div class="pform">
-    <label>Village<input class="txt" list="pushvillages" placeholder="name or x|y, x/y, x y" aria-label="Village to push, by name or coordinates"><datalist id="pushvillages">${villages.map(([n,x,y,o])=>`<option value="${esc(n)} (${x}|${y})">${esc(o)}</option>`).join('')}</datalist><span class="time">any BOB or confederacy village, by name or coordinates: x|y, x/y, x y and x,y all work</span></label>
+    <label>Village<input class="txt" list="pushvillages" placeholder="name or x|y, e.g. -50/-50" aria-label="Village to push, by name or coordinates"><datalist id="pushvillages">${villages.map(([n,x,y,o])=>`<option value="${esc(n)} (${x}|${y})">${esc(o)}</option>`).join('')}</datalist><span class="time">any BOB or confederacy village, by name or coordinates: -50|-50, -50/-50, -50 -50 and -50,-50 all work</span></label>
     <label>Name<input class="txt" placeholder="e.g. Hospital Maxvelas"></label>
     <label>Resources in all<input class="txt" value="100,000" inputmode="numeric"></label>
     <fieldset><legend>Split ${tipBtn(PUSH_TIP)}</legend><label class="nw"><input type="radio" name="pt" checked> Population-based</label><label class="nw"><input type="radio" name="pt"> Flat</label></fieldset>
@@ -945,7 +950,7 @@ const V = {
   const units=u=>`<span class="units">${Object.entries(u).flatMap(([t,l])=>l.map(([slot,n])=>`<span><i class="ui ${t==='ro'?'':t}" style="background-position:0 ${-16*slot}px" role="img" aria-label="unit"></i>${fmt(n)}</span>`)).join('')}</span>`;
   return `${head}
   <section class="panel"><h2>New defence call</h2><div class="pform">
-   <label>Village<input class="txt" list="pushvillages2" placeholder="name or x|y, x/y, x y" value="${c[16]?'':''}"><datalist id="pushvillages2"><option value="Bertíkov (-54|-128)"><option value="BOB (-48|-67)"><option value="Vemínkov (-49|-129)"></datalist><span class="time">any BOB or confederacy village, by name or coordinates: x|y, x/y, x y and x,y all work</span></label>
+   <label>Village<input class="txt" list="pushvillages2" placeholder="name or x|y, e.g. -50/-50" value="${c[16]?'':''}"><datalist id="pushvillages2"><option value="Bertíkov (-54|-128)"><option value="BOB (-48|-67)"><option value="Vemínkov (-49|-129)"></datalist><span class="time">any BOB or confederacy village, by name or coordinates: -50|-50, -50/-50, -50 -50 and -50,-50 all work</span></label>
    <label>Defence call name<input class="txt" placeholder="e.g. Hold Bertíkov"></label>
    <label><span>Type ${tip("v2's five kinds: impact (a hit at a set time), standing (until cancelled), preventive, hub (a defence hub) and insert.")}</span><select class="sel2"><option>Impact</option><option>Standing</option><option>Preventive</option><option>Hub</option><option>Insert</option></select></label>
    <label><span>Arrival <span class="time">server time</span></span><input class="txt" type="datetime-local" value="2026-10-26T01:47:04" step="1"></label>
@@ -1116,10 +1121,21 @@ function offerJump(id,label){ const t=document.getElementById(id); if(!t) return
  b.innerHTML=`<span aria-hidden="true">↓</span> ${esc(label)}`; b.onclick=()=>{ document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}); b.hidden=true; };
  b.hidden=false; clearTimeout(JUMP_T); JUMP_T=setTimeout(()=>{ b.hidden=true; },5000); }
 function render(){ FSIGNED=VIEWAS!=='visitor'; CALC.signed=FSIGNED; PVIEW=VIEWAS==='leader'?'leader':'member'; // the banner's view-as switch drives every page
- const r=(location.hash||'#today').slice(1); const v=V[r]?r:'today'; document.getElementById('view').innerHTML=V[v](); document.querySelectorAll('.theme-btn').forEach(b=>b.textContent=themeLabel()); renderNav(); twoVersionsNote(v); scrollTo(0,0); }
+ const r=(location.hash||'#today').slice(1); const v=V[r]?r:'today'; document.getElementById('view').innerHTML=V[v](); document.querySelectorAll('.theme-btn').forEach(b=>b.textContent=themeLabel()); renderNav(); twoVersionsNote(v); pathBar(); scrollTo(0,0); }
 addEventListener('hashchange',()=>{ const b=document.getElementById('jumpbtn'); if(b) b.hidden=true; render(); }); render();
 // in-page clicks redraw #view directly; put the two-versions note back after each redraw
-new MutationObserver(()=>{ if(!document.querySelector('#view .twov')) twoVersionsNote((location.hash||'#today').slice(1)); }).observe(document.getElementById('view'),{childList:true});
+// The breadcrumbs are a path bar (owner, 26 Oct 2026): the area opens the other areas, the page its sibling pages, so the page can be changed with the menu hidden or on a phone.
+function pathBar(){ const c=document.querySelector('#view .crumbs'); if(!c||c.dataset.pb) return; const r=(location.hash||'#today').slice(1), cur=navOfRoute(r); if(!cur) return;
+ const badges=[...c.querySelectorAll('.badge')].map(b=>b.outerHTML), bold=[...c.querySelectorAll('b')].map(b=>b.textContent).pop(), extra=bold&&bold!==cur.p[0]&&cur.a.pages.length>1?bold:null;
+ const areas=NAV.filter(a=>a.who.includes(VIEWAS)&&pagesFor(a).length), go1=a=>pagesFor(a).find(p=>p[1]);
+ const item=(on,label,js,soon)=>soon?`<span class="pbi soon">${label}<small class="nyi">not implemented yet</small></span>`:`<button type="button" class="pbi${on?' on':''}"${on?' aria-current="page"':''} onclick="this.closest('details').open=false;${js}">${label}</button>`;
+ const seg=(label,list,name)=>`<details class="pbseg"><summary aria-label="${esc(name)}: ${esc(label)}">${esc(label)}<span class="chev" aria-hidden="true"></span></summary><div class="pbmenu">${list}</div></details>`;
+ const areaList=areas.map(a=>{ const p=go1(a); return item(a.id===cur.a.id,a.label,p?`navGo('${p[2]}')`:'',!p); }).join('');
+ const pageList=pagesFor(cur.a).map(p=>item(p[2]===cur.p[2],p[0],`navGo('${p[2]}')`,!p[1])).join('');
+ c.dataset.pb='1'; c.classList.add('pathbar');
+ c.innerHTML=`${seg(cur.a.label,areaList,'Area')}${pagesFor(cur.a).length>1?`<span class="pbsep">/</span>${seg(cur.p[0],pageList,'Page')}`:''}${extra?`<span class="pbsep">/</span><b>${esc(extra)}</b>`:''}${badges.length?' · '+badges.join(' '):''}`; }
+addEventListener('click',e=>{ document.querySelectorAll('.pbseg[open]').forEach(d=>{ if(!d.contains(e.target)) d.open=false; }); });
+new MutationObserver(()=>{ if(!document.querySelector('#view .twov')) twoVersionsNote((location.hash||'#today').slice(1)); pathBar(); }).observe(document.getElementById('view'),{childList:true});
 const tipbox=Object.assign(document.createElement('div'),{id:'tipbox',hidden:true}); tipbox.setAttribute('role','tooltip'); document.body.appendChild(tipbox);
 function showTip(el){ tipbox.textContent=el.dataset.tip; tipbox.hidden=false; const r=el.getBoundingClientRect(), tw=tipbox.offsetWidth, th=tipbox.offsetHeight;
  const x=Math.max(12,Math.min(r.left+r.width/2-tw/2, innerWidth-tw-12)); let y=r.bottom+8; if(y+th>innerHeight-8) y=Math.max(8,r.top-th-8);
