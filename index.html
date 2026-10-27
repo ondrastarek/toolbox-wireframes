@@ -1231,7 +1231,7 @@ const V = {
    ${[1,2,3].map(t=>`<h3 class="tribeh">${tribeIcon(t)} ${TRIBES[t]}</h3><div class="dtw"><table class="dt"><thead><tr><th class="pin">Unit</th><th>Counts as</th><th class="num">Weight in calls ${tip('How much one unit adds to a call. Every unit has a weight, v2\'s rule to start (infantry 1, cavalry 2); only units counted as defence add to defence calls.')}</th><th class="num">Upkeep</th></tr></thead><tbody>
     ${CALL_UNITS[t].map((u,s)=>`<tr><td class="pin"><i class="ui ${TDEF[t].c}" style="background-position:0 ${-16*s}px" role="img" aria-label="${u[0]}"></i> ${u[0]}</td><td><select class="sel2 sm" aria-label="${u[0]} counts as"><option${u[1]==='def'?' selected':''}>defence</option><option${u[1]==='off'?' selected':''}>offence</option><option${u[1]==='spy'?' selected':''}>scouts</option></select></td><td class="num"><input class="txt" style="width:56px;text-align:right" value="${u[2]}" inputmode="decimal" aria-label="${u[0]} weight"></td><td class="num">${u[3]}</td></tr>`).join('')}
    </tbody></table></div>`).join('')}
-   <div class="actions" style="margin-top:12px"><button class="btn solid">Save</button><button class="btn" data-tip="Every unit back to how v2 counts it: its class as in v2, infantry 1 and cavalry 2">Reset to v2's values</button><span class="time">The other tribes show when a member plays one.</span></div>
+   <div class="actions" style="margin-top:12px"><button class="btn solid">Save</button><span class="time">The other tribes show when a member plays one.</span></div>
   </section>`;
   if(LEAD.stab==='owner') return head+`
   <section class="panel"><h2>Owner</h2>
