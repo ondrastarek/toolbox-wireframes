@@ -605,7 +605,7 @@ const RANKS = [['perioeci','Perioeci','joined, waiting for a leader to approve']
 const rankName = k => (RANKS.find(r=>r[0]===k)||[k,k])[1];
 const agoTxt = h => h<24?`${h} h`:`${Math.floor(h/24)} d`, agoDot = h => h<=24?'f1':h<=48?'f2':h<=72?'f3':h<=168?'f4':'f5';
 const kfmt = n => (n=Math.round(n), n>=1e6?(n/1e6).toFixed(1)+'m':n>=1e4?Math.round(n/1e3)+'k':fmt(n));
-// Leadership (leaders only; docs/06, docs/07 §4.10; drawn 27 Oct 2026). Player names and population are BOB's real ones; ranks, dates, states and settings are made up, and the made-up players (Bergmann, Kopřiva, Matylda, Old Bear, Kuba) are not ts12 players.
+// Leadership (leaders only; docs/06, docs/07 §4.10; drawn 27 Oct 2026). Player names and population are BOB's real ones; ranks, dates, states and settings are made up, and the made-up players (Bergmann, Matylda, Old Bear, Kuba) are not ts12 players.
 const LEAD = {mtab:'members', rank:'all', nositter:false, self:false, ranks:{}, stab:'general', itab:'discord', rule:'call', archon:'leader', vis:'totals', af:'all', actor:'all'};
 const LRE = v => `document.getElementById('view').innerHTML=V.${v}()`;
 const TEAM_OWNER = 'Král Králíčků';
@@ -617,8 +617,7 @@ const sittersOf = i => i%9===4?[]:[SITTER_NAMES[(i*7)%SITTER_NAMES.length]].conc
 function leadMembers(){ const noAcc=AL.bob.members.slice(-3).map(m=>m.name);
  const R=teamRows().filter(r=>!noAcc.includes(r.name)).map((r,i)=>({name:r.name,t:r.t,pop:r.pop,role:LEAD.ranks[r.name]||r.role,sit:sittersOf(i),joined:i<20?'1 Oct':i<44?`${2+i%12} Oct`:`${13+i%10} Oct`,state:'active'}));
  return R.concat([
-  {name:'Bergmann',t:2,pop:1730,role:LEAD.ranks.Bergmann||'spartan',sit:['Hanz'],joined:'3 Oct',state:'removal'},
-  {name:'Kopřiva',t:1,pop:960,role:LEAD.ranks['Kopřiva']||'spartan',sit:['Vlk'],joined:'6 Oct',state:'suspended'}]); }
+  {name:'Bergmann',t:2,pop:1730,role:LEAD.ranks.Bergmann||'spartan',sit:['Hanz'],joined:'3 Oct',state:'removal'}]); }
 function leadRank(sel,name){ if(name===TEAM_OWNER&&sel.value!=='ephor'){ sel.value='ephor'; LEAD.self=true; } else LEAD.ranks[name]=sel.value; document.getElementById('view').innerHTML=V.roles(); }
 // the capability catalogue (docs/06 rows 1 to 30) in plain words, per preset: waiting, member, defence coordinator, attack coordinator, coordinator for both, leader, guest
 const PERMS = [
@@ -626,7 +625,7 @@ const PERMS = [
   ['Change team settings, Discord and exports',[1,27],'-','-','-','-','-','y','-'],
   ['Invite and approve members',[4,5],'-','-','-','-','-','y','-'],
   ['Give ranks',[2],'-','-','-','-','-','up to Polemarch','-'],
-  ['Suspend or remove members',[6,7],'-','-','-','-','-','not Archons or Ephors','-'],
+  ['Remove members',[6,7],'-','-','-','-','-','not Archons or Ephors','-'],
   ['Hand over, archive or delete the team',[3],'-','-','-','-','-','the owner only','-'],
   ['Release scans held for a check',[15],'-','-','-','-','-','y','-'],
   ['See who is in the team',[9],'-','y','y','y','y','y','names'],
@@ -660,7 +659,6 @@ const AUDIT = [ // server time, who, what, details, group (docs/06 "Audit log ev
  ['Sun 25 Oct, 14:12','Wild Club','Marked an attack fake','Nomad → Nellynkov, lands Mon 02:54:44','ops'],
  ['Sun 25 Oct, 13:58','Wild Club','Declared an attack','Xzbit (Huma4) → BOB, lands Mon 11:14:00','ops'],
  ['Sun 25 Oct, 09:00','Král Králíčků','Made an export link','"Def sheet": team defence totals, expires Sun 22 Nov','int'],
- ['Sat 24 Oct, 23:05','SwR','Suspended a member','Kopřiva: "posts our calls to RUS"','mem'],
  ['Sun 25 Oct, 10:30','SwR','Made a one-time code','for Old Bear, expires Sun 1 Nov','team'],
  ['Sun 25 Oct, 17:20','Matylda','Asked to join','with a one-time code from Král Králíčků','mem'],
  ['Sat 24 Oct, 10:44','Král Králíčků','Made a new join code','the old invitation stopped working','team'],
@@ -1201,8 +1199,8 @@ const V = {
   </section>
   <p class="prov">Duals and sitters are set by the players themselves, or come from a scan of the game's sitter page; leaders do not approve them. Codes, asks and decisions go to the audit log.</p>`;
   const ord=k=>RANKS.findIndex(x=>x[0]===k), rows=M.filter(r=>(LEAD.rank==='all'||r.role===LEAD.rank)&&(!LEAD.nositter||!r.sit.length)).sort((a,b)=>ord(b.role)-ord(a.role)||(b.name===TEAM_OWNER)-(a.name===TEAM_OWNER)||b.pop-a.pop);
-  const state=r=>r.state==='suspended'?`<span class="neg">suspended</span><span class="sub2" style="display:block">since Sat 24 Oct, by SwR</span>`:r.state==='removal'?`<span class="neg">leaves Mon 26 Oct, 06:30</span><span class="sub2" style="display:block">removal waits 12 h</span>`:'<span class="muted">in the team</span>';
-  const act=r=>r.name===TEAM_OWNER?'<span class="muted">owner</span>':r.state==='suspended'?'<button class="btn">Restore</button>':r.state==='removal'?'<button class="btn">Cancel removal</button>':`<span class="actions"><button class="btn" data-tip="Cuts them off from the team's data at once; they stay on the list until restored or removed">Suspend</button><button class="btn" data-tip="Out of the team after 12 hours, so it can be cancelled">Remove</button></span>`;
+  const state=r=>r.state==='removal'?`<span class="neg">leaves Mon 26 Oct, 06:30</span><span class="sub2" style="display:block">removal waits 12 h</span>`:'<span class="muted">in the team</span>';
+  const act=r=>r.name===TEAM_OWNER?'<span class="muted">owner</span>':r.state==='removal'?'<button class="btn">Cancel removal</button>':`<button class="btn" data-tip="Out of the team after 12 hours, so it can be cancelled">Remove</button>`;
   const rankSel=r=>`<select class="sel2 sm" aria-label="Rank of ${esc(r.name)}" onchange="leadRank(this,'${esc(r.name).replace(/'/g,"\\'")}')">${RANKS.filter(k=>k[0]!=='perioeci').map(k=>`<option value="${k[0]}"${k[0]===r.role?' selected':''}>${k[1]}</option>`).join('')}</select>`;
   return head+`
   ${LEAD.self?`<div class="warnbox" role="alert" style="margin-bottom:12px"><span><b>Step down from Ephor?</b> You would lose the leader pages at once, and only another Ephor could give them back. You own BOB, so hand the team over first.</span><span class="actions" style="margin-left:auto"><button class="btn" onclick="LEAD.self=false;LEAD.stab='owner';go('settings')">Hand BOB over</button><button class="btn solid" onclick="LEAD.self=false;${LRE('roles')}">Keep my rank</button></span></div>`:''}
@@ -1212,7 +1210,7 @@ const V = {
    ${rows.map(r=>`<tr><td class="pin"><a href="#player">${esc(r.name)}</a><span class="sub2">${fmt(r.pop)} pop.</span></td><td>${rankSel(r)}</td><td class="sitters">${r.sit.length?r.sit.map(esc).join('<br>'):'<span class="neg">none</span>'}</td><td class="num time">${r.joined}</td><td>${state(r)}</td><td class="act">${act(r)}</td></tr>`).join('')}
    </tbody></table></div></section>
   <div class="legend ranks">${RANKS.map(r=>`<span><b>${r[1]}</b> ${r[2]}</span>`).join('')}</div>
-  <p class="prov">A leader can suspend at most 3 members an hour; a removal waits 12 hours and not in a member's first day, unless they leave. Leaders cannot act on Archons or Ephors; the owner can. Who is in BOB in the game, scan ages and Discord names are on Team › Members.</p>`; },
+  <p class="prov">A removal waits 12 hours and not in a member's first day, unless they leave. Leaders cannot act on Archons or Ephors; the owner can. Who is in BOB in the game, scan ages and Discord names are on Team › Members.</p>`; },
  settings(){
   const tip=tipBtn, tab=(k,l)=>[l,LEAD.stab===k,`LEAD.stab='${k}';`+LRE('settings')];
   const head=`<div class="crumbs">Leadership / <b>Team settings</b> · <span class="badge q">settings made up</span></div><h1>Team settings</h1><div class="meta"><span>BOB on ts12</span></div>${pageTabs([tab('general','General'),tab('ally','Alliances and wings'),tab('units','Units in calls'),tab('owner','Ownership')])}`;
@@ -1323,7 +1321,7 @@ const V = {
   <section class="panel"><h2>Always, whatever the rank</h2>
    <div class="crow"><span class="who"><span>A sitter never takes a rank: sitters see their own data, answer calls and pledge.</span></span></div>
    <div class="crow"><span class="who"><span>Until a leader approves them, a player sees only their own data.</span></span></div>
-   <div class="crow"><span class="who"><span>A suspension works at once. Suspending an Archon or an Ephor needs the owner.</span></span></div>
+   <div class="crow"><span class="who"><span>Removing an Archon or an Ephor needs the owner.</span></span></div>
    <div class="crow"><span class="who"><span>The last member who can give ranks cannot give that up, and anyone stepping down from Ephor or Archon is asked to confirm.</span></span></div>
   </section>
   <p class="prov">Changing a single cell for a rank comes in Phase 2: per rank, never per person, and the rules above always come first. "totals" means team sums without who or where.</p>`; },
