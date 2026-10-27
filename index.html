@@ -145,7 +145,8 @@ body.norail .shell{grid-template-columns:minmax(0,1fr);max-width:none}body.norai
 .pvact{display:inline-flex;gap:6px;align-items:center}.heroline{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin:4px 0 8px;font-size:13px}.sg.heroalt{background:color-mix(in srgb,var(--accent) 6%,transparent);border-radius:6px}
 .landline{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.landbig{font-size:22px;font-weight:700;letter-spacing:-.01em}.herohere{border:1px dashed var(--line);background:none;color:var(--muted);font:inherit;font-size:11px;padding:0 5px;border-radius:5px;cursor:pointer;min-width:48px;text-align:center}.herohere.on{border-style:solid;border-color:var(--accent);background:var(--accent);color:#fff}.herohere:hover{color:var(--accent);border-color:var(--accent)}.ibtn.rallyl{white-space:nowrap;text-decoration:none}.dt.st td.stcell.on button{background:color-mix(in srgb,var(--accent) 12%,transparent);box-shadow:inset 0 0 0 1.5px var(--accent)}.dt.st td.stcell.late button{opacity:.75}.spdh{display:inline-flex;align-items:center;gap:2px}.spdh b{margin-left:3px}
 .teamcheck{margin-bottom:12px}.teamcheck .crow .t{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}
-.dt th.c,.dt td.c{text-align:center}.pcell{font:inherit;font-size:12.5px;font-weight:600;width:88px;padding:3px 4px;border:1px solid var(--line);border-radius:6px;background:var(--input);color:var(--text)}.pcell.v-y{color:var(--pos);background:color-mix(in srgb,var(--pos) 13%,var(--input));border-color:color-mix(in srgb,var(--pos) 45%,var(--line))}.pcell.v-n{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--input));border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}.pcell.chg{box-shadow:0 0 0 2px var(--text)}.pyes{color:var(--pos)}.pno{color:var(--accent)}.warnbox .actions{flex:none;flex-wrap:nowrap;gap:6px}.dt td.act .actions{flex-wrap:nowrap;justify-content:flex-end;gap:6px}.dt td.act .btn{padding:3px 9px;font-size:12.5px}.permt tr.grp td{background:var(--bg);font-size:12.5px;padding-top:8px;padding-bottom:6px}.permt td:not(.pin),.permt th.c{min-width:78px;white-space:normal}.permt td.pin{white-space:normal;min-width:200px}
+.dt th.c,.dt td.c{text-align:center}.medal{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:12px;font-weight:700;color:#3a2a10}.medal.m1{background:#e8c25a}.medal.m2{background:#c9c9c9}.medal.m3{background:#d39a62}.dt tr.unk td{color:var(--muted);font-style:italic;font-size:12px;padding-top:4px;padding-bottom:4px}.dt.dash th{white-space:normal;min-width:74px}.dt.dash th .hs{white-space:normal;text-align:right}.rk4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}.rk2{align-items:start;grid-template-columns:minmax(0,3fr) minmax(0,2fr)}.t100{display:flex;justify-content:flex-end;gap:4px;font-size:11px;font-weight:400;color:var(--muted);margin-top:2px}.rkchart .bo{fill:var(--accent)}.rkchart .bd{fill:var(--muted)}.rkchart .gl{stroke:var(--line)}.rkchart text{font-size:10.5px;fill:var(--muted);text-anchor:middle}.rkchart .ay{text-anchor:end}.rkchart .bl{fill:var(--text);font-weight:600}
+@media (min-width:1700px){.rk4{grid-template-columns:repeat(4,minmax(0,1fr))}}@media (max-width:1100px){.rk2{grid-template-columns:1fr}}@media (max-width:700px){.rk4{grid-template-columns:1fr}}.pcell{font:inherit;font-size:12.5px;font-weight:600;width:88px;padding:3px 4px;border:1px solid var(--line);border-radius:6px;background:var(--input);color:var(--text)}.pcell.v-y{color:var(--pos);background:color-mix(in srgb,var(--pos) 13%,var(--input));border-color:color-mix(in srgb,var(--pos) 45%,var(--line))}.pcell.v-n{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--input));border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}.pcell.chg{box-shadow:0 0 0 2px var(--text)}.pyes{color:var(--pos)}.pno{color:var(--accent)}.warnbox .actions{flex:none;flex-wrap:nowrap;gap:6px}.dt td.act .actions{flex-wrap:nowrap;justify-content:flex-end;gap:6px}.dt td.act .btn{padding:3px 9px;font-size:12.5px}.permt tr.grp td{background:var(--bg);font-size:12.5px;padding-top:8px;padding-bottom:6px}.permt td:not(.pin),.permt th.c{min-width:78px;white-space:normal}.permt td.pin{white-space:normal;min-width:200px}
 .legend.ranks{display:flex;flex-wrap:wrap;gap:4px 16px;margin:10px 0 0;font-size:12.5px;color:var(--muted)}.legend.ranks b{color:var(--text);font-weight:600}
 .incbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 12px}
 .dt.inc2 td{vertical-align:top}.dt.inc2 td:last-child{width:22%;min-width:150px}.dt.inc2 .note{width:100%;padding:4px 7px;font-size:12.5px;resize:vertical;font-family:inherit}.hn{color:var(--muted);font-weight:600}
@@ -331,7 +332,7 @@ const AL = {"bob":{"alliance":{"aid":52,"tag":"BOB","members":59,"villages":415,
 let ASEL = 'bob';
 let AQ = '', TVIEW = 'troops', TKILO = false, THIDE = false, TMIN = 1;
 // tables sort by clicking a column header; a second click reverses (owner, 25 Oct 2026)
-const SORT = {st:{k:'d',d:1}, fll:{k:'n',d:1}, p:{k:'pop',d:-1}, a:{k:'pop',d:-1}, t:{k:'off',d:-1}, pu:{k:'owe',d:-1}, f:{k:'d',d:1}, fl:{k:'dist',d:1}, inc:{k:'t',d:1}, mem:{k:'pop',d:-1}, tt:{k:'name',d:1}};
+const SORT = {st:{k:'d',d:1}, fll:{k:'n',d:1}, p:{k:'pop',d:-1}, a:{k:'pop',d:-1}, t:{k:'off',d:-1}, pu:{k:'owe',d:-1}, f:{k:'d',d:1}, fl:{k:'dist',d:1}, inc:{k:'t',d:1}, mem:{k:'pop',d:-1}, tt:{k:'name',d:1}, dash:{k:'name',d:1}};
 const sortHead = (sc, k, label, view, first=-1) => { const s=SORT[sc], on=s.k===k; return `<button type="button" class="hs${on?' on':''}" onclick="setSort('${sc}','${k}',${first},'${view}')">${label}<span class="arr" aria-hidden="true">${on?(s.d<0?'↓':'↑'):''}</span></button>`; };
 const ariaSort = (sc, k) => SORT[sc].k===k ? ` aria-sort="${SORT[sc].d<0?'descending':'ascending'}"` : '';
 function setSort(sc, k, first, view){ const s=SORT[sc]; if(s.k===k) s.d=-s.d; else { s.k=k; s.d=first; } document.getElementById('view').innerHTML=V[view](); if(view==='alliance') findMember(); }
@@ -516,7 +517,7 @@ const NAV = [
  {id:'today', label:'Today', who:['member','leader'], pages:[['Today','today','today']]},
  {id:'my', label:'My villages', who:['member','leader'], pages:[['Troops','troops','troops'],['Farm lists','farmlists','farmlists'],['Activity',null,'activity'],['Villages',null,'villages']]},
  {id:'ops', label:'Operations', who:['member','leader'], pages:[['Incoming','incoming','incoming'],['Defence calls','calls','calls'],['Pushes','pushes','pushes'],['Attack plans',null,'plans'],['Reports',null,'reports']]},
- {id:'team', label:'Team', who:['member','leader'], pages:[['Members','members','members',['leader']],['Troops','teamtroops','teamtroops'],['Dashboard',null,'dashboard'],['Rankings',null,'rankings']]},
+ {id:'team', label:'Team', who:['member','leader'], pages:[['Members','members','members',['leader']],['Troops','teamtroops','teamtroops'],['Dashboard','dashboard','dashboard',['leader']],['Rankings','rankings','rankings']]},
  {id:'world', label:'World', who:['visitor','member','leader'], pages:[['Overview','world','world'],['Players','player','player'],['Alliances','alliance','alliance'],['Inactive finder','inactives','inactives']]},
  {id:'tools', label:'Tools', who:['visitor','member','leader'], pages:[['Travel and send time','calc','calc'],['Counter attack','calc','counter']]},
  {id:'lead', label:'Leadership', who:['leader'], pages:[['Members and roles','roles','roles'],['Team settings','settings','settings'],['Discord and exports','integrations','integrations'],['Permissions','perms','perms'],['Sharing with allied teams','sharing','sharing'],['Audit and team events','audit','audit']]}];
@@ -543,7 +544,7 @@ function toggleRail(){ document.body.classList.toggle('norail'); render(); }
 function setViewAs(v){ VIEWAS=v; NAVOPEN=null; FSIGNED=v!=='visitor'; CALC.signed=v!=='visitor'; PVIEW=v==='leader'?'leader':'member';
  const r=(location.hash||'#today').slice(1), cur=navOfRoute(r); if(cur&&(!cur.a.who.includes(v)||(cur.p[3]&&!cur.p[3].includes(v)))) go(v==='visitor'?'world':'today'); else render(); }
 // third level: tabs for sibling views inside a page
-const TWO_VERSIONS = {pushes:['member','leader'], calls:['member','leader'], incoming:['member','leader'], teamtroops:['member','leader'], inactives:['visitor','member'], calc:['visitor','member']};
+const TWO_VERSIONS = {pushes:['member','leader'], calls:['member','leader'], incoming:['member','leader'], teamtroops:['member','leader'], rankings:['member','leader'], inactives:['visitor','member'], calc:['visitor','member']};
 function twoVersionsNote(r){ const t=TWO_VERSIONS[r]; if(!t) return; const h1=document.querySelector('#view h1'); if(!h1) return;
  const now=VIEWAS==='visitor'?'visitor':t[0]==='visitor'?'member':VIEWAS;
  h1.insertAdjacentHTML('afterend',`<div class="twov"><b>Two versions: ${t[0]} and ${t[1]}.</b> You are looking at the <b>${now}</b> version. Switch with "view as" in the grey bar at the top.</div>`); }
@@ -604,7 +605,7 @@ function teamRows(){ return AL.bob.members.map((m,i)=>{ const t=TRIBE_OF[m.name]
 const RANKS = [['perioeci','Perioeci','joined, waiting for a leader to approve'],['spartan','Spartan','member'],['lochagos','Lochagos','coordinates defence'],['polemarch','Polemarch','coordinates attacks'],['archon','Archon','strategic adviser'],['ephor','Ephor','team leader']];
 const rankName = k => (RANKS.find(r=>r[0]===k)||[k,k])[1];
 const agoTxt = h => h<24?`${h} h`:`${Math.floor(h/24)} d`, agoDot = h => h<=24?'f1':h<=48?'f2':h<=72?'f3':h<=168?'f4':'f5';
-const kfmt = n => (n=Math.round(n), n>=1e6?(n/1e6).toFixed(1)+'m':n>=1e4?Math.round(n/1e3)+'k':fmt(n));
+const kfmt = n => (n=Math.round(n), n>=999500?(n/1e6).toFixed(1)+'m':n>=1e4?Math.round(n/1e3)+'k':fmt(n));
 // Leadership (leaders only; docs/06, docs/07 §4.10; drawn 27 Oct 2026). Player names and population are BOB's real ones; ranks, dates, states and settings are made up, and the made-up players (Bergmann, Matylda, Old Bear, Kuba) are not ts12 players.
 const LEAD = {mtab:'members', rank:'all', nositter:false, self:false, ranks:{}, stab:'general', itab:'discord', rule:'call', perm:{}, af:'all', actor:'all'};
 const LRE = v => `document.getElementById('view').innerHTML=V.${v}()`;
@@ -632,7 +633,7 @@ const PERMS = [
   ['Release scans held for a check',[15],'n','n','n','n','y','y','n',YN,null,1],
   ['See who is in the team',[9],'n','y','y','y','y','y','names',YN],
   ['Team rankings',[],'n','y','y','y','y','y','n',YN],
-  ['Team dashboard',[],'n','n','n','y','y','y','n',YN],
+  ['Dashboard and world ranking',[],'n','n','n','y','y','y','n',YN],
   ['See and edit their own data',[10],'y','y','y','y','y','y','own',null,'everyone has it']]],
  ['Troops',[
   ['Defence troops per village',[11],'n','n','y','y','y','y','shared',TRP],
@@ -674,6 +675,18 @@ const AUDIT_G = {all:'All',mem:'Members',av:'Avatars',team:'Team',ops:'Operation
 const CALL_UNITS = {1:[['Legionnaire','def',1,1],['Praetorian','def',1,1],['Imperian','off',1,1],['Equites Legati','spy',2,2],['Equites Imperatoris','off',2,3],['Equites Caesaris','off',2,4],['Battering Ram','off',1,3],['Fire Catapult','off',1,6],['Senator','off',1,5]],
  2:[['Clubswinger','off',1,1],['Spearman','def',1,1],['Axeman','off',1,1],['Scout','spy',2,1],['Paladin','def',2,2],['Teutonic Knight','off',2,3],['Ram','off',1,3],['Catapult','off',1,6],['Chief','off',1,4]],
  3:[['Phalanx','def',1,1],['Swordsman','off',1,1],['Pathfinder','spy',2,2],['Theutates Thunder','off',2,2],['Druidrider','def',2,2],['Haeduan','def',2,3],['Ram','off',1,3],['Trebuchet','off',1,6],['Chieftain','off',1,4]]};
+// Team rankings and the dashboard (27 Oct 2026), after v2's Team › Rankings and Team › Dashboard (research/14 §7.12). Names are BOB's; every number is made up.
+let RKTAB = 'team', DASHQ = '', CHART = {size:10, max:100}; const DASHTOP = new Set();
+function statRows(){ const noAcc=AL.bob.members.slice(-3).map(m=>m.name);
+ const R=teamRows().filter(r=>!noAcc.includes(r.name)).map((r,i)=>{ const prod=Math.round(r.pop*(14+18*rnd(i,7))), res=Math.round(prod*24*(18+30*rnd(i,8)));
+  return {...r, prod, res, farm:Math.round(res*(0.01+0.15*rnd(i,9))), crop:Math.round(prod*(0.3+0.45*rnd(i,10))), up:r.def.up+r.off.up, cp:Math.round(r.pop*(30+30*rnd(i,11))), cpd:Math.round(r.pop*(0.8+0.6*rnd(i,12))),
+   defS:Math.round((r.def.vi+r.def.vc)/2), offS:r.off.att, offV:[r.off.att].concat(i%4===0?[Math.round(r.off.att*0.62)]:[]).concat(i%8===0?[Math.round(r.off.att*0.48)]:[])}; });
+ // world ranks: the team's players spread through the world ranking with made-up gaps for everyone else
+ const place=(key,seed)=>{ let last=0; sortBy(R,r=>r[key],-1).forEach((r,j)=>{ last+=1+Math.floor(rnd(j,seed)*(2+j*1.6)); r[key+'W']=last; }); };
+ place('prod',21); place('res',22); place('cp',23); place('cpd',24); place('defS',25);
+ const offs=sortBy(R.flatMap(r=>r.offV.map((s,k)=>({r,s,k}))),o=>o.s,-1); let last=0; offs.forEach((o,j)=>{ last+=1+Math.floor(rnd(j,26)*(2+j*1.4)); o.w=last; if(o.k===0) o.r.offSW=last; });
+ R.offs=offs; return R; }
+const offVillage = (name,k) => (BOB_VILLAGES[name]||[])[k]?.[0];
 const V = {
  worlds(){ const run=D.worlds.filter(w=>w.status==='running'); return `<div class="crumbs">All worlds</div><h1>Worlds</h1><div class="meta"><span>${run.length} running</span><span>${D.worlds.filter(w=>w.status==='announced').length} announced</span><span>${D.worlds.filter(w=>w.status==='ended').length} ended</span></div>
   <div class="filters"><span class="f">Status <b>Running</b></span><span class="f">Speed <b>Any</b></span><span class="f">Region <b>Any</b></span><span class="f">Type <b>Any</b></span></div>
@@ -1349,6 +1362,61 @@ const V = {
    ${rows.map(a=>`<tr><td class="nw time">${a[0]}</td><td class="nw">${a[1]==='Toolbox'?'<span class="muted">Toolbox</span>':esc(a[1])}</td><td class="nw">${a[2]} <span class="flag">${AUDIT_G[a[4]]}</span></td><td style="white-space:normal;min-width:220px">${esc(a[3])}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">Nothing matches.</td></tr>'}
    </tbody></table></div></section>
   <p class="prov">Kept 24 months; nobody can change or delete it. Lochagoi see only defence-call events, Polemarchs only attack plans. A deleted account shows as "a former member".</p>`; },
+ rankings(){
+  const lead=VIEWAS==='leader', R=statRows(), rer="document.getElementById('view').innerHTML=V.rankings()";
+  if(!lead&&RKTAB==='world') RKTAB='team';
+  const tabs=pageTabs([['Team ranking',RKTAB==='team',"RKTAB='team';"+rer]].concat(lead?[['World ranking',RKTAB==='world',"RKTAB='world';"+rer]]:[]).concat([['Chart',RKTAB==='chart',"RKTAB='chart';"+rer]]));
+  const head=`<div class="crumbs">Team / <b>Rankings</b> · <span class="badge q">names real, numbers made up</span></div><h1>Rankings</h1><div class="meta"><span>BOB on ts12 · ${R.length} members</span></div>${tabs}`;
+  const medal=n=>n<=3?`<span class="medal m${n}" aria-label="rank ${n}">${n}</span>`:`<span class="muted">#${n}</span>`;
+  const who=r=>`<a href="#player">${esc(r.name)}</a>`;
+  if(RKTAB==='team'){
+   const def=sortBy(R,r=>r.defS,-1), off=sortBy(R,r=>r.off.up,-1);
+   return head+`<div class="grid2 rk2">
+    <section class="panel"><h2>Defence <small>from troop scans, ordered by strength</small></h2><div class="dtw"><table class="dt"><thead><tr><th class="num">#</th><th class="pin">Player</th><th class="num">Upkeep</th><th class="num">Strength ${tipBtn('The average of defence against infantry and against cavalry, as v2 counts it.')}</th><th class="num">vs infantry</th><th class="num">vs cavalry</th></tr></thead><tbody>
+     ${def.map((r,j)=>`<tr><td class="num">${medal(j+1)}</td><td class="pin">${who(r)}</td><td class="num nw"><i class="dot ${agoDot(r.ago)}" title="troops scanned ${agoTxt(r.ago)} ago"></i>${kfmt(r.def.up)}</td><td class="num"><b>${kfmt(r.defS)}</b></td><td class="num">${kfmt(r.def.vi)}</td><td class="num">${kfmt(r.def.vc)}</td></tr>`).join('')}
+    </tbody></table></div></section>
+    <section class="panel"><h2>Offence <small>from troop scans, ordered by upkeep</small></h2><div class="dtw"><table class="dt"><thead><tr><th class="num">#</th><th class="pin">Player</th><th class="num">Upkeep</th><th class="num">Strength</th></tr></thead><tbody>
+     ${off.map((r,j)=>`<tr><td class="num">${medal(j+1)}</td><td class="pin">${who(r)}</td><td class="num nw"><i class="dot ${agoDot(r.ago)}" title="troops scanned ${agoTxt(r.ago)} ago"></i>${kfmt(r.off.up)}</td><td class="num"><b>${kfmt(r.offS)}</b></td></tr>`).join('')}
+    </tbody></table></div></section></div>
+    <p class="prov">The dot is the age of each member's troop scan, with v2's colours. Units count where the team set them (Leadership › Team settings › Units in calls).</p>`; }
+  if(RKTAB==='world'){
+   const col=(title,unit,list)=>{ let rows='', last=0; list.forEach(([w,label,v])=>{ if(w>last+1) rows+=`<tr class="unk"><td class="num">#${last+1}${w-1>last+1?'–'+(w-1):''}</td><td colspan="2">not in the team</td></tr>`; rows+=`<tr><td class="num">#${w}</td><td class="pin">${label}</td><td class="num">${kfmt(v)}</td></tr>`; last=w; });
+    return `<section class="panel"><h2>${title}</h2><div class="dtw"><table class="dt"><thead><tr><th class="num">Rank</th><th class="pin">Player</th><th class="num">${unit}</th></tr></thead><tbody>${rows}</tbody></table></div></section>`; };
+   const cut=w=>w<=150, by=(k)=>sortBy(R,r=>r[k+'W'],1).filter(r=>cut(r[k+'W'])).map(r=>[r[k+'W'],who(r),r[k]]);
+   const offL=R.offs.filter(o=>cut(o.w)).map(o=>[o.w,who(o.r)+(o.k?` <span class="sub2" style="display:inline">· ${esc(offVillage(o.r.name,o.k)||'village '+(o.k+1))}</span>`:''),o.s]);
+   return head+`<p class="time" style="margin:0 0 10px">Where BOB's members stand in the game's world statistics, the first 150 places. Each member's own statistics scan fills their places; everyone else shows as a gap.</p>
+    <div class="rk4">${col('Resources so far','Resources',by('res'))}${col('Offensive strength','Strength',offL)}${col('Defensive strength','Strength',by('defS'))}${col('Culture points so far','CP',by('cp'))}</div>
+    <p class="prov">The offence ranking lists up to three armies per player, as the game does. The dot colours of v2 show on the dashboard, where each member's scan age is.</p>`; }
+  // chart: the team's places in the world's off and def rankings, counted per rank group (v2's Charts tab)
+  const size=Math.max(1,CHART.size|0), max=Math.max(size,CHART.max|0), n=Math.ceil(max/size), off=Array(n).fill(0).map(()=>({c:0,s:0})), def=Array(n).fill(0).map(()=>({c:0,s:0}));
+  R.offs.forEach(o=>{ if(o.w<=max){ const g=off[Math.floor((o.w-1)/size)]; g.c++; g.s+=o.s; } });
+  R.forEach(r=>{ if(r.defSW<=max){ const g=def[Math.floor((r.defSW-1)/size)]; g.c++; g.s+=r.defS; } });
+  const top=Math.max(1,...off.map(g=>g.c),...def.map(g=>g.c)), x0=40, gw=96, W=x0+n*gw+10, H=290, bw=30, y=c=>H-30-(H-80)*c/top;
+  const lab=(g,kind)=>!g.c?'':kind==='def'?Math.round(g.s/g.c/1000/45)+'k':Math.round(g.s/g.c/1000/41)+'kT '+Math.round(g.s/g.c/1000/58)+'kR';
+  const offLab=(g,x,yy)=>`<text x="${x}" y="${yy-19}" class="bl">${Math.round(g.s/g.c/1000/41)}kT</text><text x="${x}" y="${yy-6}" class="bl">${Math.round(g.s/g.c/1000/58)}kR</text>`;
+  const bars=[...Array(n).keys()].map(i=>{ const cx=x0+gw*i+gw/2, o=off[i], d=def[i];
+   return `${o.c?`<rect x="${cx-bw-2}" y="${y(o.c)}" width="${bw}" height="${H-30-y(o.c)}" class="bo"><title>${o.c} off · ${lab(o,'off')}</title></rect>${offLab(o,cx-bw/2-2,y(o.c))}`:''}
+    ${d.c?`<rect x="${cx+2}" y="${y(d.c)}" width="${bw}" height="${H-30-y(d.c)}" class="bd"><title>${d.c} def · ${lab(d,'def')}</title></rect><text x="${cx+2+bw/2}" y="${y(d.c)-5}" class="bl">${lab(d,'def')}</text>`:''}
+    <text x="${cx}" y="${H-12}" class="ax">${i*size+1}–${(i+1)*size}</text>`; }).join('');
+  const grid=[...Array(top+1).keys()].map(c=>`<line x1="${x0}" x2="${W-10}" y1="${y(c)}" y2="${y(c)}" class="gl"/><text x="${x0-8}" y="${y(c)+4}" class="ay">${c}</text>`).join('');
+  return head+`<section class="panel"><div class="pchecks" style="margin:0 0 10px"><label class="nw">Group size <input class="txt" style="width:64px" type="number" min="1" value="${size}" onchange="CHART.size=+this.value;${rer}"></label><label class="nw">Down to rank <input class="txt" style="width:72px" type="number" min="10" value="${max}" onchange="CHART.max=+this.value;${rer}"></label><span class="legend" style="margin:0"><span><i class="sw" style="background:var(--accent)"></i>offence</span><span><i class="sw" style="background:var(--muted)"></i>defence</span></span></div>
+   <h2>BOB's armies in the world ranking <small>how many per rank group</small></h2>
+   <div class="dtw"><svg class="rkchart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="BOB's offensive and defensive armies per world rank group">${grid}${bars}</svg></div>
+   <p class="time" style="margin:8px 0 0">Over each bar, the group's average in thousands of equivalent upkeep, as v2 shows it: defence as all Phalanxes (k), offence as a Teuton club hammer with rams and Great Barracks and Stables (kT), or a Roman Caesaris hammer with catapults, Horse Drinking Trough 20 and Great Barracks and Stables (kR).</p></section>`; },
+ dashboard(){
+  const R=statRows(), q=DASHQ.trim().toLowerCase(), tip=tipBtn;
+  const COLS=[['prod','Production per hour','prodW'],['res','Resources so far','resW'],['farm','Farming',null],['crop','Crop per hour',null],['up','Upkeep',null],['cp','CP so far','cpW'],['cpd','CP per day','cpdW'],['defS','Defensive strength','defSW'],['offS','Offensive strength','offSW']];
+  let rows=R.filter(r=>(!q||r.name.toLowerCase().includes(q))&&[...DASHTOP].every(k=>r[k+'W']<=100));
+  rows=sortBy(rows,SORT.dash.k==='name'?r=>r.name:r=>r[SORT.dash.k],SORT.dash.d);
+  const hs=(k,l)=>sortHead('dash',k,l,'dashboard',k==='name'?1:-1), rer="document.getElementById('view').innerHTML=V.dashboard()";
+  const th=([k,l,w])=>`<th class="num"${ariaSort('dash',k)}>${hs(k,l)}${k==='crop'?' '+tip('Crop production per hour, from the population at midnight; it may have changed since.'):''}${w?`<label class="t100"><input type="checkbox"${DASHTOP.has(k)?' checked':''} onchange="DASHTOP.${'has'}('${k}')?DASHTOP.delete('${k}'):DASHTOP.add('${k}');${rer}"> top 100</label>`:''}</th>`;
+  const td=(r,[k,,w])=>`<td class="num nw">${k==='up'?`${kfmt(r.up)} <i class="dot ${agoDot(r.ago)}" title="troops scanned ${agoTxt(r.ago)} ago"></i>`:kfmt(r[k])}${w?`<span class="sub2" style="display:block">#${fmt(r[w])}</span>`:''}</td>`;
+  return `<div class="crumbs">Team / <b>Dashboard</b> · <span class="badge q">names real, numbers made up</span></div><h1>Dashboard</h1><div class="meta"><span>BOB on ts12 · ${R.length} members</span><span># is the place in the world</span></div>
+  <section class="panel"><div class="pchecks" style="margin:0 0 10px"><input class="txt" style="width:200px" placeholder="search a player" value="${esc(DASHQ)}" oninput="DASHQ=this.value;clearTimeout(window.dq);window.dq=setTimeout(()=>{${rer};const s=document.querySelector('#view input.txt');s.focus();s.setSelectionRange(s.value.length,s.value.length)},250)" aria-label="Search a player"><span class="time">${rows.length} shown${DASHTOP.size?' · top 100 in '+[...DASHTOP].map(k=>COLS.find(c=>c[0]===k)[1].toLowerCase()).join(', '):''}</span></div>
+   <div class="dtw"><table class="dt dash"><thead><tr><th class="pin"${ariaSort('dash','name')}>${hs('name','Player')}</th>${COLS.map(th).join('')}</tr></thead><tbody>
+   ${rows.map(r=>`<tr><td class="pin nw"><i class="dot ${agoDot(r.sago)}" title="statistics scanned ${agoTxt(r.sago)} ago"></i><a href="#player">${esc(r.name)}</a></td>${COLS.map(c=>td(r,c)).join('')}</tr>`).join('')||'<tr><td colspan="10" class="muted">Nobody matches.</td></tr>'}
+   </tbody></table></div></section>
+  <p class="prov">From each member's scan of the game's statistics page (the dot before the name is its age) and, for upkeep, their troop scan. "Top 100" keeps the members who are in the world's first 100 for that column. Farming is the resources raided so far.</p>`; },
  today(){
   // Illustrative scenario at 21:42:00 ST, Král Králíčků's real villages on ts12 (x1). Travel times follow docs/05 §5.2:
   // Praetorian speed 5, Equites Caesaris 10; Pepíkov has TS 8, every other village is under 20 fields away so TS does not count.
