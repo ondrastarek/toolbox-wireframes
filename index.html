@@ -145,7 +145,7 @@ body.norail .shell{grid-template-columns:minmax(0,1fr);max-width:none}body.norai
 .pvact{display:inline-flex;gap:6px;align-items:center}.heroline{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin:4px 0 8px;font-size:13px}.sg.heroalt{background:color-mix(in srgb,var(--accent) 6%,transparent);border-radius:6px}
 .landline{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.landbig{font-size:22px;font-weight:700;letter-spacing:-.01em}.herohere{border:1px dashed var(--line);background:none;color:var(--muted);font:inherit;font-size:11px;padding:0 5px;border-radius:5px;cursor:pointer;min-width:48px;text-align:center}.herohere.on{border-style:solid;border-color:var(--accent);background:var(--accent);color:#fff}.herohere:hover{color:var(--accent);border-color:var(--accent)}.ibtn.rallyl{white-space:nowrap;text-decoration:none}.dt.st td.stcell.on button{background:color-mix(in srgb,var(--accent) 12%,transparent);box-shadow:inset 0 0 0 1.5px var(--accent)}.dt.st td.stcell.late button{opacity:.75}.spdh{display:inline-flex;align-items:center;gap:2px}.spdh b{margin-left:3px}
 .teamcheck{margin-bottom:12px}.teamcheck .crow .t{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}
-.dt th.c,.dt td.c{text-align:center}.permopt{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center}.warnbox .actions{flex:none;flex-wrap:nowrap;gap:6px}.dt td.act .actions{flex-wrap:nowrap;justify-content:flex-end;gap:6px}.dt td.act .btn{padding:3px 9px;font-size:12.5px}.permt tr.grp td{background:var(--bg);font-size:12.5px;padding-top:8px;padding-bottom:6px}.permt td:not(.pin),.permt th.c{min-width:78px;white-space:normal}.permt td.pin{white-space:normal;min-width:200px}
+.dt th.c,.dt td.c{text-align:center}.pcell{font:inherit;font-size:12.5px;padding:2px 4px;border:1px solid var(--line);border-radius:6px;background:var(--input);color:var(--muted)}.pcell.v-y{color:var(--pos);font-weight:600}.pcell.v-tot,.pcell.v-own{color:var(--text)}.pcell.chg{box-shadow:0 0 0 2px var(--accent)}.warnbox .actions{flex:none;flex-wrap:nowrap;gap:6px}.dt td.act .actions{flex-wrap:nowrap;justify-content:flex-end;gap:6px}.dt td.act .btn{padding:3px 9px;font-size:12.5px}.permt tr.grp td{background:var(--bg);font-size:12.5px;padding-top:8px;padding-bottom:6px}.permt td:not(.pin),.permt th.c{min-width:78px;white-space:normal}.permt td.pin{white-space:normal;min-width:200px}
 .legend.ranks{display:flex;flex-wrap:wrap;gap:4px 16px;margin:10px 0 0;font-size:12.5px;color:var(--muted)}.legend.ranks b{color:var(--text);font-weight:600}
 .incbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 12px}
 .dt.inc2 td{vertical-align:top}.dt.inc2 td:last-child{width:22%;min-width:150px}.dt.inc2 .note{width:100%;padding:4px 7px;font-size:12.5px;resize:vertical;font-family:inherit}.hn{color:var(--muted);font-weight:600}
@@ -606,11 +606,9 @@ const rankName = k => (RANKS.find(r=>r[0]===k)||[k,k])[1];
 const agoTxt = h => h<24?`${h} h`:`${Math.floor(h/24)} d`, agoDot = h => h<=24?'f1':h<=48?'f2':h<=72?'f3':h<=168?'f4':'f5';
 const kfmt = n => (n=Math.round(n), n>=1e6?(n/1e6).toFixed(1)+'m':n>=1e4?Math.round(n/1e3)+'k':fmt(n));
 // Leadership (leaders only; docs/06, docs/07 §4.10; drawn 27 Oct 2026). Player names and population are BOB's real ones; ranks, dates, states and settings are made up, and the made-up players (Bergmann, Matylda, Old Bear, Kuba) are not ts12 players.
-const LEAD = {mtab:'members', rank:'all', nositter:false, self:false, ranks:{}, stab:'general', itab:'discord', rule:'call', archon:'leader', vis:'totals', af:'all', actor:'all'};
+const LEAD = {mtab:'members', rank:'all', nositter:false, self:false, ranks:{}, stab:'general', itab:'discord', rule:'call', perm:{}, af:'all', actor:'all'};
 const LRE = v => `document.getElementById('view').innerHTML=V.${v}()`;
 const TEAM_OWNER = 'Král Králíčků';
-// v2's ranks onto v3's presets (research/14 §3.5 item 4); the team chooses what Archon is (Permissions)
-const rankPreset = k => ({perioeci:'waiting', spartan:'member', lochagos:'defence coordinator', polemarch:'attack coordinator', archon:LEAD.archon==='leader'?'leader':'coordinator', ephor:'leader'}[k]);
 // sitters are made-up names: who sits whom is not public (wireframe review, 27 Oct 2026: show names, not counts)
 const SITTER_NAMES = ['Jarda','Mira_88','Kubík','Lenka','Tomas','Petrik','Zuzka','Ondra2','Radek','Bára','Hanz','Vlk','Eliška','Dusty','Marek'];
 const sittersOf = i => i%9===4?[]:[SITTER_NAMES[(i*7)%SITTER_NAMES.length]].concat(i%3===0?[SITTER_NAMES[(i*11+5)%SITTER_NAMES.length]]:[]);
@@ -620,36 +618,43 @@ function leadMembers(){ const noAcc=AL.bob.members.slice(-3).map(m=>m.name);
   {name:'Bergmann',t:2,pop:1730,role:LEAD.ranks.Bergmann||'spartan',sit:['Hanz'],joined:'3 Oct',state:'removal'}]); }
 function leadRank(sel,name){ if(name===TEAM_OWNER&&sel.value!=='ephor'){ sel.value='ephor'; LEAD.self=true; } else LEAD.ranks[name]=sel.value; document.getElementById('view').innerHTML=V.roles(); }
 // the capability catalogue (docs/06 rows 1 to 30) in plain words, per preset: waiting, member, defence coordinator, attack coordinator, coordinator for both, leader, guest
+// what each rank may do; the defaults are v2's (its global page matrix per rank in menu_teammate_rank, and the Lochagos-and-up checks on calls, pushes and attack marks; research/14 §7.11). Ephors edit it (owner, 27 Oct 2026).
+// a row: label, catalogue numbers (docs/06), Perioeci, Spartan, Lochagos, Polemarch, Archon, Ephor, guest, the choices a cell offers, why it is fixed, new in v3
+const YN=['y','n'], TRP=['y','tot','n'];
 const PERMS = [
  ['Team',[
-  ['Change team settings, Discord and exports',[1,27],'-','-','-','-','-','y','-'],
-  ['Invite and approve members',[4,5],'-','-','-','-','-','y','-'],
-  ['Give ranks',[2],'-','-','-','-','-','up to Polemarch','-'],
-  ['Remove members',[6,7],'-','-','-','-','-','not Archons or Ephors','-'],
-  ['Hand over, archive or delete the team',[3],'-','-','-','-','-','the owner only','-'],
-  ['Release scans held for a check',[15],'-','-','-','-','-','y','-'],
-  ['See who is in the team',[9],'-','y','y','y','y','y','names'],
-  ['See and edit their own data',[10],'y','y','y','y','y','y','own']]],
+  ['Change team settings, Discord and exports',[1,27],'n','n','n','n','n','y','n',YN],
+  ['Edit this table',[1],'n','n','n','n','n','y','n',null,'only Ephors, as in v2'],
+  ['Invite and approve members',[4,5],'n','n','n','n','y','y','n',YN],
+  ['Give ranks, up to their own',[2],'n','n','n','n','y','y','n',YN],
+  ['Remove members, up to their own rank',[6,7],'n','n','n','n','y','y','n',YN],
+  ['Hand over, archive or delete the team',[3],'n','n','n','n','n','owner','n',null,'the owner only'],
+  ['Release scans held for a check',[15],'n','n','n','n','y','y','n',YN,null,1],
+  ['See who is in the team',[9],'n','y','y','y','y','y','names',YN],
+  ['Team rankings',[],'n','y','y','y','y','y','n',YN],
+  ['Team dashboard',[],'n','n','n','y','y','y','n',YN],
+  ['See and edit their own data',[10],'y','y','y','y','y','y','own',null,'everyone has it']]],
  ['Troops',[
-  ['Defence troops per village',[11],'-','tot','y','totals','y','y','shared'],
-  ['Offence troops per village',[12],'-','tot','totals','y','y','y','-'],
-  ['Scouts per village',[13],'-','tot','y','y','y','y','-'],
-  ['Enter troops for others',[14],'-','-','defence','offence','y','y','-']]],
+  ['Defence troops per village',[11],'n','n','y','y','y','y','shared',TRP],
+  ['Offence troops per village',[12],'n','n','n','y','y','y','n',TRP],
+  ['Scouts per village',[13],'n','n','y','y','y','y','n',TRP],
+  ['Enter troops for others',[14],'n','n','n','n','y','y','n',YN,null,1]]],
  ['Defence',[
-  ['See the team\'s incoming attacks',[16],'own','own','y','y','y','y','-'],
-  ['Mark attacks real or fake',[17],'-','own','y','-','y','y','-'],
-  ['Open and run defence calls, pledge for others',[18,20],'-','-','y','-','y','y','-'],
-  ['Answer defence calls',[19],'-','y','y','y','y','y','shared']]],
+  ['See the team\'s incoming attacks',[16],'own','y','y','y','y','y','n',['y','own','n']],
+  ['Mark attacks, set real or fake',[17],'n','n','y','y','y','y','n',YN],
+  ['Open and run defence calls, pledge for others',[18,20],'n','n','y','y','y','y','n',YN],
+  ['Answer defence calls',[19],'n','y','y','y','y','y','shared',YN]]],
  ['Attack (Phase 2)',[
-  ['Run the team\'s attack plans',[21,22],'-','-','-','y','y','y','-'],
-  ['Their own attack plan',[23],'-','y','y','y','y','y','-']]],
+  ['Run the team\'s attack plans',[21,22],'n','n','n','y','y','y','n',YN],
+  ['Their own attack plan',[23],'n','y','y','y','y','y','n',YN]]],
  ['Pushes and more',[
-  ['Request and manage pushes',[24,25],'-','-','y','y','y','y','-'],
-  ['See members\' availability',[26],'-','-','y','y','y','y','-'],
-  ['Edit map markers (Phase 2)',[30],'-','-','y','y','y','y','-'],
-  ['Share with allied teams (Phase 2)',[28],'-','-','-','-','-','y','-']]],
+  ['Request and manage pushes',[24,25],'n','n','y','y','y','y','n',YN],
+  ['Answer push requests',[],'n','y','y','y','y','y','n',YN],
+  ['See members\' availability',[26],'n','n','n','y','y','y','n',YN],
+  ['Edit map markers (Phase 2)',[30],'n','n','n','n','y','y','n',YN,null,1],
+  ['Share with allied teams (Phase 2)',[28],'n','n','n','n','n','y','n',YN]]],
  ['Records',[
-  ['Read the audit log',[29],'-','-','defence calls','attack plans','calls and plans','y','-']]]];
+  ['Read the audit log',[29],'n','n','n','n','y','y','n',YN,null,1]]]];
 const AUDIT = [ // server time, who, what, details, group (docs/06 "Audit log events"); all made up
  ['Sun 25 Oct, 21:40','Král Králíčků','Opened a defence call','Hold Bertíkov, impact, 30,000 defence','ops'],
  ['Sun 25 Oct, 21:10','Pipka','Left the team','by themselves; the leaders were told on Discord','mem'],
@@ -1307,25 +1312,23 @@ const V = {
   </section>
   <p class="prov">Names go into messages as plain text, so an enemy's village name cannot ping or link anything. Toolbox edits its own message as a call or push fills, at most every 5 seconds.</p>`; },
  perms(){
-  const tip=tipBtn, ar=LEAD.archon==='leader', full=LEAD.vis==='full';
-  const col=[['perioeci',2],['spartan',3],['lochagos',4],['polemarch',5],['archon',ar?7:6],['ephor',7]];
-  const cell=v=>v==='y'?'<span class="pos" aria-label="yes">✓</span>':v==='-'?'<span class="zero" aria-label="no">–</span>':v==='tot'?(full?'<span class="pos" aria-label="yes">✓</span>':'totals'):esc(v);
-  const ephor=(row,v)=>row[1].includes(2)?cell(v)+'<span class="sub2" style="display:block">the owner: all ranks</span>':row[1].includes(6)?cell(v)+'<span class="sub2" style="display:block">the owner: everyone</span>':cell(v);
-  const seg=(k,opts)=>`<span class="seg">${opts.map(([v,l])=>`<button class="${LEAD[k]===v?'on':''}" onclick="LEAD.${k}='${v}';${LRE('perms')}">${l}</button>`).join('')}</span>`;
-  return `<div class="crumbs">Leadership / <b>Permissions</b></div><h1>Permissions</h1><div class="meta"><span>BOB on ts12</span><span>this table is public too, at toolboxtravian.com/roles</span></div>
-  <section class="panel"><div class="pchecks" style="gap:10px 28px">
-   <span class="permopt">Archon counts as ${seg('archon',[['leader','a leader'],['coord','a coordinator']])} ${tip('v2\'s Archon was a strategic adviser; teams used the rank both ways. As a coordinator, an Archon coordinates both defence and attacks.')}</span>
-   <span class="permopt">Spartans see the team's troops as ${seg('vis',[['totals','totals'],['full','full tables']])} ${tip('Totals by default, as the plan proposes: a spy who joins sees team sums, not who holds what where. Open question 19.')}</span></div></section>
-  <section class="panel"><div class="dtw"><table class="dt permt"><thead><tr><th class="pin">May</th>${col.map(([k])=>`<th class="c">${rankName(k)}<span class="sub2" style="display:block;font-weight:400">${rankPreset(k)}</span></th>`).join('')}<th class="c">Guest<span class="sub2" style="display:block;font-weight:400">allied coordinator, Phase 2</span></th></tr></thead><tbody>
-   ${PERMS.map(([g,rows])=>`<tr class="grp"><td colspan="8"><b>${g}</b></td></tr>`+rows.map(row=>`<tr><td class="pin">${row[0]}</td>${col.map(([k,i])=>`<td class="c">${k==='ephor'?ephor(row,row[i]):k==='archon'&&row[1].includes(3)?cell('-'):cell(row[i])}</td>`).join('')}<td class="c">${cell(row[8])}</td></tr>`).join('')).join('')}
-   </tbody></table></div></section>
-  <section class="panel"><h2>Always, whatever the rank</h2>
+  const tip=tipBtn, V2={y:'✓',n:'–',tot:'totals',own:'own',owner:'the owner only',names:'names',shared:'shared'};
+  const col=[['perioeci',2],['spartan',3],['lochagos',4],['polemarch',5],['archon',6],['ephor',7]], fixed=k=>k==='perioeci'||k==='ephor';
+  let changes=0;
+  const cell=(row,gi,ri,k,i)=>{ const key=`${gi}.${ri}.${i}`, def=row[i], v=LEAD.perm[key]??def, ch=v!==def; if(ch) changes++;
+   if(fixed(k)||row[10]||!row[9]) return v==='y'?'<span class="pos" aria-label="yes">✓</span>':v==='n'?'<span class="zero" aria-label="no">–</span>':esc(V2[v]||v);
+   return `<select class="pcell v-${v}${ch?' chg':''}" aria-label="${esc(row[0])}: ${rankName(k)}" onchange="LEAD.perm['${key}']=this.value;${LRE('perms')}">${row[9].map(o=>`<option value="${o}"${o===v?' selected':''}>${V2[o]}</option>`).join('')}</select>`; };
+  const body=PERMS.map(([g,rows],gi)=>`<tr class="grp"><td colspan="8"><b>${g}</b></td></tr>`+rows.map((row,ri)=>`<tr><td class="pin">${row[0]}${row[11]?' <small class="flag" data-tip="Not in v2; set for Archons and Ephors to start">new</small>':''}${row[10]?' <small class="muted" data-tip="Fixed: '+esc(row[10])+'">🔒</small>':''}</td>${col.map(([k,i])=>`<td class="c">${cell(row,gi,ri,k,i)}</td>`).join('')}<td class="c muted">${esc(V2[row[8]]||row[8])}</td></tr>`).join('')).join('');
+  return `<div class="crumbs">Leadership / <b>Permissions</b></div><h1>Permissions</h1><div class="meta"><span>BOB on ts12</span><span>Ephors edit this table; v2's defaults to start</span></div>
+  ${changes?`<div class="warnbox" style="margin-bottom:12px"><span><b>${changes} change${changes>1?'s':''} not saved.</b> Changed cells are outlined.</span><span class="actions" style="margin-left:auto"><button class="btn" onclick="LEAD.perm={};${LRE('perms')}">Discard</button><button class="btn solid" onclick="LEAD.perm={};${LRE('perms')}">Save</button></span></div>`:''}
+  <section class="panel"><div class="dtw"><table class="dt permt"><thead><tr><th class="pin">May</th>${col.map(([k])=>`<th class="c">${rankName(k)}${fixed(k)?`<span class="sub2" style="display:block;font-weight:400">${k==='ephor'?'everything, fixed':'waiting, fixed'}</span>`:''}</th>`).join('')}<th class="c">Guest<span class="sub2" style="display:block;font-weight:400">allied coordinator, Phase 2</span></th></tr></thead><tbody>${body}</tbody></table></div></section>
+  <section class="panel"><h2>Always, whatever the table says</h2>
    <div class="crow"><span class="who"><span>A sitter never takes a rank: sitters see their own data, answer calls and pledge.</span></span></div>
    <div class="crow"><span class="who"><span>Until a leader approves them, a player sees only their own data.</span></span></div>
-   <div class="crow"><span class="who"><span>Removing an Archon or an Ephor needs the owner.</span></span></div>
-   <div class="crow"><span class="who"><span>The last member who can give ranks cannot give that up, and anyone stepping down from Ephor or Archon is asked to confirm.</span></span></div>
+   <div class="crow"><span class="who"><span>Ranks are given and members removed only up to one's own rank; removing an Archon or an Ephor needs the owner.</span></span></div>
+   <div class="crow"><span class="who"><span>Ephors keep every right, so the team can never lock itself out; anyone stepping down from Ephor or Archon is asked to confirm.</span></span></div>
   </section>
-  <p class="prov">Changing a single cell for a rank comes in Phase 2: per rank, never per person, and the rules above always come first. "totals" means team sums without who or where.</p>`; },
+  <p class="prov">The defaults are v2's own: which pages each rank opens, and what v2 lets Lochagos and above do on them (research/14 §7.11). "totals" means team sums without who or where. Every change goes to the audit log.</p>`; },
  sharing(){
   const cats=[['Defence calls',1,1],['Push requests',1,0],['Troops, team totals',1,1],['Troops per village',0,0],['Team dashboard',0,0],['Reports',0,1],['Attack plans',0,0],['Statistics and rankings',1,1],['Top-10 tracking',0,0],['Trade routes',1,1],['Map markers',1,0]];
   return `<div class="crumbs">Leadership / <b>Sharing with allied teams</b> · <span class="badge q">Phase 2, a sketch</span></div><h1>Sharing with allied teams</h1><div class="meta"><span>BOB on ts12</span></div>
