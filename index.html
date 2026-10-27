@@ -145,6 +145,7 @@ body.norail .shell{grid-template-columns:minmax(0,1fr);max-width:none}body.norai
 .pvact{display:inline-flex;gap:6px;align-items:center}.heroline{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin:4px 0 8px;font-size:13px}.sg.heroalt{background:color-mix(in srgb,var(--accent) 6%,transparent);border-radius:6px}
 .landline{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.landbig{font-size:22px;font-weight:700;letter-spacing:-.01em}.herohere{border:1px dashed var(--line);background:none;color:var(--muted);font:inherit;font-size:11px;padding:0 5px;border-radius:5px;cursor:pointer;min-width:48px;text-align:center}.herohere.on{border-style:solid;border-color:var(--accent);background:var(--accent);color:#fff}.herohere:hover{color:var(--accent);border-color:var(--accent)}.ibtn.rallyl{white-space:nowrap;text-decoration:none}.dt.st td.stcell.on button{background:color-mix(in srgb,var(--accent) 12%,transparent);box-shadow:inset 0 0 0 1.5px var(--accent)}.dt.st td.stcell.late button{opacity:.75}.spdh{display:inline-flex;align-items:center;gap:2px}.spdh b{margin-left:3px}
 .teamcheck{margin-bottom:12px}.teamcheck .crow .t{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}
+.dt th.c,.dt td.c{text-align:center}.permopt{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center}.warnbox .actions{flex:none;flex-wrap:nowrap;gap:6px}.dt td.act .actions{flex-wrap:nowrap;justify-content:flex-end;gap:6px}.dt td.act .btn{padding:3px 9px;font-size:12.5px}.permt tr.grp td{background:var(--bg);font-size:12.5px;padding-top:8px;padding-bottom:6px}.permt td:not(.pin),.permt th.c{min-width:78px;white-space:normal}.permt td.pin{white-space:normal;min-width:200px}
 .legend.ranks{display:flex;flex-wrap:wrap;gap:4px 16px;margin:10px 0 0;font-size:12.5px;color:var(--muted)}.legend.ranks b{color:var(--text);font-weight:600}
 .incbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 12px}
 .dt.inc2 td{vertical-align:top}.dt.inc2 td:last-child{width:22%;min-width:150px}.dt.inc2 .note{width:100%;padding:4px 7px;font-size:12.5px;resize:vertical;font-family:inherit}.hn{color:var(--muted);font-weight:600}
@@ -518,7 +519,7 @@ const NAV = [
  {id:'team', label:'Team', who:['member','leader'], pages:[['Members','members','members',['leader']],['Troops','teamtroops','teamtroops'],['Dashboard',null,'dashboard'],['Rankings',null,'rankings']]},
  {id:'world', label:'World', who:['visitor','member','leader'], pages:[['Overview','world','world'],['Players','player','player'],['Alliances','alliance','alliance'],['Inactive finder','inactives','inactives']]},
  {id:'tools', label:'Tools', who:['visitor','member','leader'], pages:[['Travel and send time','calc','calc'],['Counter attack','calc','counter']]},
- {id:'lead', label:'Leadership', who:['leader'], pages:[['Members and roles',null,'roles'],['Team settings',null,'settings'],['Permissions',null,'perms'],['Audit and team events',null,'audit']]}];
+ {id:'lead', label:'Leadership', who:['leader'], pages:[['Members and roles','roles','roles'],['Team settings','settings','settings'],['Discord and exports','integrations','integrations'],['Permissions','perms','perms'],['Sharing with allied teams','sharing','sharing'],['Audit and team events','audit','audit']]}];
 let VIEWAS = 'leader', NAVOPEN = null; const PINS = new Set(['farmlists','pushes','calc']);
 const pagesFor = a => a.pages.filter(p=>!p[3]||p[3].includes(VIEWAS));
 const navPage = id => NAV.flatMap(a=>a.pages.map(p=>({a,p}))).find(o=>o.p[2]===id);
@@ -604,6 +605,71 @@ const RANKS = [['perioeci','Perioeci','joined, waiting for a leader to approve']
 const rankName = k => (RANKS.find(r=>r[0]===k)||[k,k])[1];
 const agoTxt = h => h<24?`${h} h`:`${Math.floor(h/24)} d`, agoDot = h => h<=24?'f1':h<=48?'f2':h<=72?'f3':h<=168?'f4':'f5';
 const kfmt = n => (n=Math.round(n), n>=1e6?(n/1e6).toFixed(1)+'m':n>=1e4?Math.round(n/1e3)+'k':fmt(n));
+// Leadership (leaders only; docs/06, docs/07 §4.10; drawn 27 Oct 2026). Player names and population are BOB's real ones; ranks, dates, states and settings are made up, and the made-up players (Bergmann, Kopřiva, Nightowl, Matylda, Old Bear, Kuba) are not ts12 players.
+const LEAD = {mtab:'members', rank:'all', nositter:false, self:false, ranks:{}, stab:'general', itab:'discord', rule:'call', archon:'leader', vis:'totals', af:'all', actor:'all'};
+const LRE = v => `document.getElementById('view').innerHTML=V.${v}()`;
+const TEAM_OWNER = 'Král Králíčků';
+// v2's ranks onto v3's presets (research/14 §3.5 item 4); the team chooses what Archon is (Permissions)
+const rankPreset = k => ({perioeci:'waiting', spartan:'member', lochagos:'defence coordinator', polemarch:'attack coordinator', archon:LEAD.archon==='leader'?'leader':'coordinator', ephor:'leader'}[k]);
+function leadMembers(){ const noAcc=AL.bob.members.slice(-3).map(m=>m.name);
+ const R=teamRows().filter(r=>!noAcc.includes(r.name)).map((r,i)=>({name:r.name,t:r.t,pop:r.pop,role:LEAD.ranks[r.name]||r.role,sit:i%9===4?0:1+(i%3===0),joined:i<20?'1 Oct':i<44?`${2+i%12} Oct`:`${13+i%10} Oct`,av:'verified',state:'active',title:r.name==='SwR'?'War council':r.role==='lochagos'?'Def calls, evenings':''}));
+ return R.concat([
+  {name:'Nightowl',t:3,pop:412,role:LEAD.ranks.Nightowl||'spartan',sit:0,joined:'24 Oct',av:'attested',state:'active',title:''},
+  {name:'Bergmann',t:2,pop:1730,role:LEAD.ranks.Bergmann||'spartan',sit:1,joined:'3 Oct',av:'verified',state:'removal',title:''},
+  {name:'Kopřiva',t:1,pop:960,role:LEAD.ranks['Kopřiva']||'spartan',sit:1,joined:'6 Oct',av:'verified',state:'suspended',title:''}]); }
+function leadRank(sel,name){ if(name===TEAM_OWNER&&sel.value!=='ephor'){ sel.value='ephor'; LEAD.self=true; } else LEAD.ranks[name]=sel.value; document.getElementById('view').innerHTML=V.roles(); }
+// the capability catalogue (docs/06 rows 1 to 30) in plain words, per preset: waiting, member, defence coordinator, attack coordinator, coordinator for both, leader, guest
+const PERMS = [
+ ['Team',[
+  ['Change team settings, Discord and exports',[1,27],'-','-','-','-','-','y','-'],
+  ['Invite and approve members, attest avatars',[4,5],'-','-','-','-','-','y','-'],
+  ['Give ranks',[2],'-','-','-','-','-','up to Polemarch','-'],
+  ['Suspend or remove members',[6,7],'-','-','-','-','-','not Archons or Ephors','-'],
+  ['Hand over, archive or delete the team',[3],'-','-','-','-','-','the owner only','-'],
+  ['Decide duals and sitters',[8],'-','own avatar','-','-','-','y','-'],
+  ['Release scans held for a check',[15],'-','-','-','-','-','y','-'],
+  ['See who is in the team',[9],'-','y','y','y','y','y','names'],
+  ['See and edit their own data',[10],'y','y','y','y','y','y','own']]],
+ ['Troops',[
+  ['Defence troops per village',[11],'-','tot','y','totals','y','y','shared'],
+  ['Offence troops per village',[12],'-','tot','totals','y','y','y','-'],
+  ['Scouts per village',[13],'-','tot','y','y','y','y','-'],
+  ['Enter troops for others',[14],'-','-','defence','offence','y','y','-']]],
+ ['Defence',[
+  ['See the team\'s incoming attacks',[16],'own','own','y','y','y','y','-'],
+  ['Mark attacks real or fake',[17],'-','own','y','-','y','y','-'],
+  ['Open and run defence calls, pledge for others',[18,20],'-','-','y','-','y','y','-'],
+  ['Answer defence calls',[19],'-','y','y','y','y','y','shared']]],
+ ['Attack (Phase 2)',[
+  ['Run the team\'s attack plans',[21,22],'-','-','-','y','y','y','-'],
+  ['Their own attack plan',[23],'-','y','y','y','y','y','-']]],
+ ['Pushes and more',[
+  ['Request and manage pushes',[24,25],'-','-','y','y','y','y','-'],
+  ['See members\' availability',[26],'-','-','y','y','y','y','-'],
+  ['Edit map markers (Phase 2)',[30],'-','-','y','y','y','y','-'],
+  ['Share with allied teams (Phase 2)',[28],'-','-','-','-','-','y','-']]],
+ ['Records',[
+  ['Read the audit log',[29],'-','-','defence calls','attack plans','calls and plans','y','-']]]];
+const AUDIT = [ // server time, who, what, details, group (docs/06 "Audit log events"); all made up
+ ['Sun 25 Oct, 21:40','Král Králíčků','Opened a defence call','Hold Bertíkov, impact, 30,000 defence','ops'],
+ ['Sun 25 Oct, 21:10','Pipka','Left the team','by themselves; the leaders were told on Discord','mem'],
+ ['Sun 25 Oct, 20:02','SwR','Changed a rank','Traxanas: Spartan → Lochagos','team'],
+ ['Sun 25 Oct, 19:15','Toolbox','Switched a Discord channel off','#leaders failed 3 times: the webhook was deleted in Discord','int'],
+ ['Sun 25 Oct, 18:30','Král Králíčků','Scheduled a removal','Bergmann, who left BOB for RUS; done Mon 26 Oct, 06:30 unless cancelled','mem'],
+ ['Sun 25 Oct, 14:12','Wild Club','Marked an attack fake','Nomad → Nellynkov, lands Mon 02:54:44','ops'],
+ ['Sun 25 Oct, 13:58','Wild Club','Declared an attack','Xzbit (Huma4) → BOB, lands Mon 11:14:00','ops'],
+ ['Sun 25 Oct, 09:00','Král Králíčků','Made an export link','"Def sheet": team defence totals, expires Sun 22 Nov','int'],
+ ['Sat 24 Oct, 23:05','SwR','Suspended a member','Kopřiva: "posts our calls to RUS"','mem'],
+ ['Sat 24 Oct, 16:20','SwR','Attested an avatar','Nightowl: not verified; lapses after the map.sql of Tue 27 Oct','av'],
+ ['Sat 24 Oct, 12:00','Toolbox','Verified an avatar','Matylda: village code seen in the map.sql of 24 Oct','av'],
+ ['Sat 24 Oct, 10:44','Král Králíčků','Made a new join code','the old invitation stopped working','team'],
+ ['Fri 23 Oct, 20:15','Král Králíčků','Released a held scan','Hutkyy\'s rally point, held because its clock was 9 min off','ops'],
+ ['Fri 23 Oct, 08:00','Kuba','Asked to be a dual','of Wild Club, who has not answered since','av']];
+const AUDIT_G = {all:'All',mem:'Members',av:'Avatars',team:'Team',ops:'Operations',int:'Integrations'};
+// units in calls (owner decision, 26 Oct 2026): v2's classes and weights as the start (research/14 §7.7, §7.9: defence infantry 1, defence cavalry 2), upkeep from packages/game-constants
+const CALL_UNITS = {1:[['Legionnaire','def',1,1],['Praetorian','def',1,1],['Imperian','off',null,1],['Equites Legati','spy',null,2],['Equites Imperatoris','off',null,3],['Equites Caesaris','off',null,4],['Battering Ram','off',null,3],['Fire Catapult','off',null,6],['Senator','off',null,5]],
+ 2:[['Clubswinger','off',null,1],['Spearman','def',1,1],['Axeman','off',null,1],['Scout','spy',null,1],['Paladin','def',2,2],['Teutonic Knight','off',null,3],['Ram','off',null,3],['Catapult','off',null,6],['Chief','off',null,4]],
+ 3:[['Phalanx','def',1,1],['Swordsman','off',null,1],['Pathfinder','spy',null,2],['Theutates Thunder','off',null,2],['Druidrider','def',2,2],['Haeduan','def',2,3,'changed by SwR on 24 Oct; v2 counts it as offence'],['Ram','off',null,3],['Trebuchet','off',null,6],['Chieftain','off',null,4]]};
 const V = {
  worlds(){ const run=D.worlds.filter(w=>w.status==='running'); return `<div class="crumbs">All worlds</div><h1>Worlds</h1><div class="meta"><span>${run.length} running</span><span>${D.worlds.filter(w=>w.status==='announced').length} announced</span><span>${D.worlds.filter(w=>w.status==='ended').length} ended</span></div>
   <div class="filters"><span class="f">Status <b>Running</b></span><span class="f">Speed <b>Any</b></span><span class="f">Region <b>Any</b></span><span class="f">Type <b>Any</b></span></div>
@@ -1078,7 +1144,7 @@ const V = {
    ${rows.map((r,i)=>{ const sit=[R[(i+7)%R.length].name,i%3?R[(i+19)%R.length].name:null].filter(Boolean); return `<tr><td class="pin"><a href="#player">${esc(r.name)}</a></td><td>${r.role==='spartan'?'<span class="muted">Spartan</span>':`<span class="kind">${rankName(r.role)}</span>`}</td><td>${tribeIcon(r.t)}</td><td class="sitters muted">${sit.map((n,k)=>`Sitter ${String.fromCharCode(65+((i+k*7)%26))}`).join('<br>')}</td><td class="time nw">@discord-${i+1}</td><td class="num nw"><i class="dot ${agoDot(r.ago)}"></i>${agoTxt(r.ago)}</td><td class="num nw"><i class="dot ${agoDot(r.sago)}"></i>${agoTxt(r.sago)}</td><td class="num">${r.decl||'<span class="zero">0</span>'}</td><td class="num"><span>${fmt(r.pop)}</span><span class="sub2 ${r.dp>0?'pos':'muted'}" style="display:block">${r.dp>0?'+'+fmt(r.dp):r.dp}</span></td><td class="num">${r.vil}${r.dv?`<span class="sub2 pos" style="display:block">+${r.dv}</span>`:''}</td></tr>`; }).join('')}
   </tbody></table></div></section>
   <div class="legend ranks">${RANKS.map(r=>`<span><b>${r[1]}</b> ${r[2]}</span>`).join('')}</div>
-  <p class="prov">Population and change come from the daily map.sql; scan ages show who needs to scan again, with v2's dots. The ranks are v2's, after the Spartan Academy where the tool started.</p>`; },
+  <p class="prov">Ranks, titles, suspensions and join requests are managed in <a href="#roles">Leadership › Members and roles</a>. Population and change come from the daily map.sql; scan ages show who needs to scan again, with v2's dots. The ranks are v2's, after the Spartan Academy where the tool started.</p>`; },
  teamtroops(){
   const lead=VIEWAS==='leader', tip=t=>`<button class="tip" data-tip="${esc(t)}" aria-label="${esc(t)}">?</button>`, R=teamRows();
   const rer="document.getElementById('view').innerHTML=V.teamtroops()";
@@ -1114,6 +1180,170 @@ const V = {
   else { const GET={name:r=>r.name,ago:r=>r.ago,sc:r=>r.scouts}, rows=sortBy(R,(GET[SORT.tt.k]||GET.name),SORT.tt.d);
    table=`<thead><tr>${th('ago','Scanned','',1)}${th('name','Player','',1)}${th('sc','Scouts','num')}</tr></thead><tbody>${rows.map(r=>`<tr><td>${scanCell(r)}</td><td><a href="#player">${esc(r.name)}</a></td><td class="num"><span class="nw">${icon(r.T,r.T.scout)} ${fmt(r.scouts)}</span></td></tr>`).join('')}</tbody>`; }
   return `${head}${filt}${tiles}<section class="panel"><div class="dtw"><table class="dt">${table}</table></div></section>`; },
+ roles(){
+  const tip=tipBtn, M=leadMembers(), waiting=3;
+  const tabs=pageTabs([['Members',LEAD.mtab==='members',"LEAD.mtab='members';"+LRE('roles')],[`Join requests <span class="badge">${waiting}</span>`,LEAD.mtab==='join',"LEAD.mtab='join';"+LRE('roles')]]);
+  const head=`<div class="crumbs">Leadership / <b>Members and roles</b> · <span class="badge q">names and population real, ranks and states made up</span></div><h1>Members and roles</h1><div class="meta"><span>BOB on ts12 · ${M.length} members</span><span>you are the owner</span></div>${tabs}`;
+  if(LEAD.mtab==='join') return head+`
+  <section class="panel"><h2>Invite players <small>the link opens the join page: who runs BOB, what members share, then "Ask to join"</small></h2>
+   <div class="crow"><span class="who"><span><b>Invitation link</b> · toolboxtravian.com/join/ts12/•••••••• <span class="muted">(the code is shown once, when it is made)</span></span><span class="time">made Sat 24 Oct · expires Sat 31 Oct · used 4 of 30 times</span></span><span class="t"><span class="actions"><button class="btn solid">Copy the invitation</button><button class="btn" data-tip="The old link stops working at once">New code</button></span></span></div>
+   <div class="crow"><span class="who"><span>New codes expire after <select class="sel2 sm" aria-label="Expiry of new codes"><option>1 day</option><option selected>7 days</option><option>30 days</option></select> and work <select class="sel2 sm" aria-label="Uses of new codes"><option>10</option><option selected>30</option><option>100</option></select> times</span></span></div>
+  </section>
+  <section class="panel"><h2>Waiting for you <small>a player joins once a leader approves; they agreed to share when they asked</small></h2>
+   <div class="crow"><span class="who"><span><b>Matylda</b> · ${tribeIcon(3)} · 2 villages, 1,104 population</span><span class="time"><span class="pos">✓ verified</span>: the village code was in the map.sql of 24 Oct · in BOB in the game · asked Sun 25 Oct, 17:20</span></span><span class="t"><span class="actions"><button class="btn solid">Approve</button><button class="btn">Refuse</button></span></span></div>
+   <div class="crow"><span class="who"><span><b>Old Bear</b> · ${tribeIcon(1)} · 1 village, 238 population</span><span class="time">not verified yet: the village code was not in today's map.sql · <span class="neg">in LA, not in BOB</span> (LA is BOB's confederacy) · asked Sun 25 Oct, 11:02</span></span><span class="t"><span class="actions"><button class="btn">Approve as attested</button>${tip('You vouch for them. They count in BOB only, their scans stay in BOB, and the admission lapses after two map.sql files unless his village code shows. You can extend it once, by 7 days.')}<button class="btn">Refuse</button></span><span class="time">or wait for tomorrow's map.sql</span></span></div>
+   <div class="crow"><span class="who"><span><b>Kuba</b> asks to be a <b>dual of Wild Club</b></span><span class="time">Wild Club, the verified owner of the avatar, has not answered for 8 days, so a leader may decide · asked Fri 23 Oct</span></span><span class="t"><span class="actions"><button class="btn">Approve as dual</button><button class="btn">Refuse</button></span></span></div>
+  </section>
+  <section class="panel"><h2>Admitted, not verified yet</h2>
+   <div class="crow"><span class="who"><span><b>Nightowl</b> · attested by SwR on Sat 24 Oct</span><span class="time">lapses after the map.sql of Tue 27 Oct unless the village code shows · until then they count in BOB only</span></span><span class="t"><button class="btn">Extend by 7 days</button><span class="time">once only</span></span></div>
+  </section>
+  <p class="prov">Only a village renamed with the player's code proves an avatar (docs/06, method A). An attested player counts only in BOB and never blocks the real owner. Asks and decisions go to the audit log.</p>`;
+  const ord=k=>RANKS.findIndex(x=>x[0]===k), rows=M.filter(r=>(LEAD.rank==='all'||r.role===LEAD.rank)&&(!LEAD.nositter||!r.sit)).sort((a,b)=>ord(b.role)-ord(a.role)||(b.name===TEAM_OWNER)-(a.name===TEAM_OWNER)||b.pop-a.pop);
+  const state=r=>r.state==='suspended'?`<span class="neg">suspended</span><span class="sub2" style="display:block">since Sat 24 Oct, by SwR</span>`:r.state==='removal'?`<span class="neg">leaves Mon 26 Oct, 06:30</span><span class="sub2" style="display:block">removal waits 12 h</span>`:r.av==='attested'?`<span>attested</span><span class="sub2" style="display:block">not verified · lapses Tue</span>`:'<span class="muted">active</span>';
+  const act=r=>r.name===TEAM_OWNER?'<span class="muted">owner</span>':r.state==='suspended'?'<button class="btn">Restore</button>':r.state==='removal'?'<button class="btn">Cancel removal</button>':`<span class="actions"><button class="btn" data-tip="Works at once: they keep only their own data">Suspend</button><button class="btn" data-tip="After 12 hours, so it can be cancelled">Remove</button></span>`;
+  const rankSel=r=>`<select class="sel2 sm" aria-label="Rank of ${esc(r.name)}" onchange="leadRank(this,'${esc(r.name).replace(/'/g,"\\'")}')">${RANKS.filter(k=>k[0]!=='perioeci').map(k=>`<option value="${k[0]}"${k[0]===r.role?' selected':''}>${k[1]}</option>`).join('')}</select>`;
+  return head+`
+  ${LEAD.self?`<div class="warnbox" role="alert" style="margin-bottom:12px"><span><b>Step down from Ephor?</b> You would lose the leader pages at once, and only another Ephor could give them back. You own BOB, so hand the team over first.</span><span class="actions" style="margin-left:auto"><button class="btn" onclick="LEAD.self=false;LEAD.stab='owner';go('settings')">Hand BOB over</button><button class="btn solid" onclick="LEAD.self=false;${LRE('roles')}">Keep my rank</button></span></div>`:''}
+  <section class="panel">
+   <div class="pchecks" style="margin:0 0 10px"><label class="nw">Rank <select class="sel2 sm" onchange="LEAD.rank=this.value;${LRE('roles')}" aria-label="Show rank"><option value="all">all ranks</option>${RANKS.filter(k=>k[0]!=='perioeci').map(k=>`<option value="${k[0]}"${LEAD.rank===k[0]?' selected':''}>${k[1]}</option>`).join('')}</select></label><label class="nw"><input type="checkbox"${LEAD.nositter?' checked':''} onchange="LEAD.nositter=this.checked;${LRE('roles')}"> Only members without a sitter</label><span class="time">${rows.length} shown</span></div>
+   <div class="dtw"><table class="dt"><thead><tr><th class="pin">Player</th><th>Rank ${tip('The ranks of Toolbox v2. '+RANKS.map(r=>r[1]+': '+r[2]).join('. ')+'. What each may do is under Permissions.')}</th><th>Title ${tip('Free text the members see next to the rank, e.g. Def calls, evenings.')}</th><th>Can</th><th class="num">Joined</th><th class="num">Sitters</th><th>State</th><th class="act"></th></tr></thead><tbody>
+   ${rows.map(r=>`<tr><td class="pin"><a href="#player">${esc(r.name)}</a><span class="sub2">${fmt(r.pop)} pop.${r.av==='verified'?' · <b class="pos">✓</b>':''}</span></td><td>${rankSel(r)}</td><td><input class="txt" style="width:120px" value="${esc(r.title)}" placeholder="none" aria-label="Title of ${esc(r.name)}"></td><td class="time">${rankPreset(r.role)}</td><td class="num time">${r.joined}</td><td class="num">${r.sit||'<span class="neg">none</span>'}</td><td>${state(r)}</td><td class="act">${act(r)}</td></tr>`).join('')}
+   </tbody></table></div></section>
+  <div class="legend ranks">${RANKS.map(r=>`<span><b>${r[1]}</b> ${r[2]}</span>`).join('')}</div>
+  <p class="prov">✓ the avatar is verified. A leader can suspend at most 3 members an hour; a removal waits 12 hours and not in a member's first day, unless they leave. Leaders cannot act on Archons or Ephors; the owner can. Who is in BOB in the game, scan ages and Discord names are on Team › Members.</p>`; },
+ settings(){
+  const tip=tipBtn, tab=(k,l)=>[l,LEAD.stab===k,`LEAD.stab='${k}';`+LRE('settings')];
+  const head=`<div class="crumbs">Leadership / <b>Team settings</b> · <span class="badge q">settings made up</span></div><h1>Team settings</h1><div class="meta"><span>BOB on ts12</span></div>${pageTabs([tab('general','General'),tab('ally','Alliances and wings'),tab('units','Units in calls'),tab('owner','Ownership')])}`;
+  if(LEAD.stab==='ally') return head+`
+  <section class="panel"><h2>BOB's alliances <small>a team is not an alliance: it can span the main alliance, wings and partners</small></h2>
+   <div class="dtw"><table class="dt"><thead><tr><th class="pin">Alliance</th><th>Link</th><th class="num">Players in the game</th><th class="num">In the team</th><th>Set</th><th class="act"></th></tr></thead><tbody>
+    <tr><td class="pin"><a href="#alliance">BOB</a></td><td><span class="kind">main</span></td><td class="num">59</td><td class="num">56</td><td class="time">when the team was made</td><td class="act"></td></tr>
+    <tr><td class="pin">LA</td><td><select class="sel2 sm" aria-label="Link of LA"><option>wing</option><option selected>confederacy partner</option></select></td><td class="num">41</td><td class="num">0</td><td class="time">by hand, Král Králíčků, 2 Oct</td><td class="act"><button class="btn">Remove</button></td></tr>
+   </tbody></table></div>
+   <div class="crow"><span class="who"><span><b>BOB Academy</b> may be a wing of BOB <span class="badge q">made up</span></span><span class="time">3 players moved from BOB to BOB Academy this week, from the map.sql</span></span><span class="t"><span class="actions"><button class="btn">Add as wing</button><button class="btn">Ignore</button></span></span></div>
+   <div class="pform" style="margin-top:12px"><label>Add an alliance<input class="txt" placeholder="tag or name, e.g. LA"></label><label>As<select class="sel2"><option>wing</option><option>confederacy partner</option></select></label><div class="actions wide"><button class="btn solid">Add</button><span class="time">Phase 2: one click on your alliance's diplomacy page fills the partners (it needs the in-game diplomacy right).</span></div></div>
+  </section>
+  <section class="panel"><h2>Daily check</h2><div class="pchecks"><label class="nw" style="white-space:normal"><input type="checkbox" checked> Check the team against these alliances every day, from that day's map.sql</label></div><p class="time" style="margin:6px 0 0">Members who left the alliances and players without an account show on Team › Members; nobody is removed automatically.</p></section>`;
+  if(LEAD.stab==='units') return head+`
+  <section class="panel"><h2>How units count in calls <small>v2's rule to start: defence infantry 1, defence cavalry 2</small></h2>
+   <p class="time" style="margin:0 0 10px">Scans keep the real unit counts; these settings apply when Toolbox reads them, so a change never rewrites anything and works on old calls too. Upkeep is shown for comparison.</p>
+   ${[1,2,3].map(t=>`<h3 class="tribeh">${tribeIcon(t)} ${TRIBES[t]}</h3><div class="dtw"><table class="dt"><thead><tr><th class="pin">Unit</th><th>Counts as</th><th class="num">Weight in calls ${tip('How much one unit adds to a call\'s defence. Only defence units count.')}</th><th class="num">Upkeep</th><th></th></tr></thead><tbody>
+    ${CALL_UNITS[t].map((u,s)=>`<tr><td class="pin"><i class="ui ${TDEF[t].c}" style="background-position:0 ${-16*s}px" role="img" aria-label="${u[0]}"></i> ${u[0]}</td><td><select class="sel2 sm" aria-label="${u[0]} counts as"><option${u[1]==='def'?' selected':''}>defence</option><option${u[1]==='off'?' selected':''}>offence</option><option${u[1]==='spy'?' selected':''}>scouts</option></select></td><td class="num">${u[2]!=null?`<input class="txt" style="width:56px;text-align:right" value="${u[2]}" inputmode="decimal" aria-label="${u[0]} weight">`:'<span class="zero">–</span>'}</td><td class="num">${u[3]}</td><td class="time">${u[4]?`<span class="neg">${u[4]}</span>`:''}</td></tr>`).join('')}
+   </tbody></table></div>`).join('')}
+   <div class="actions" style="margin-top:12px"><button class="btn solid">Save</button><button class="btn">Back to v2's rule</button><span class="time">The other tribes show when a member plays one.</span></div>
+  </section>`;
+  if(LEAD.stab==='owner') return head+`
+  <section class="panel"><h2>Owner</h2>
+   <div class="crow"><span class="who"><span><b>Král Králíčků</b> (you) owns BOB</span><span class="time">only the owner can hand the team over, archive or delete it</span></span></div>
+   <div class="pform"><label>Hand BOB to<select class="sel2"><option>SwR (Archon)</option></select></label><div class="actions wide"><button class="btn">Hand over</button><span class="time">You sign in again to confirm. You stay an Ephor.</span></div></div>
+  </section>
+  <section class="panel"><h2>End of the team</h2>
+   <div class="crow"><span class="who"><span><b>Archive BOB</b></span><span class="time">members keep reading; nothing new comes in</span></span><span class="t"><button class="btn">Archive</button></span></div>
+   <div class="crow"><span class="who"><span><b>Delete BOB</b></span><span class="time">calls, pushes, plans, scans and settings go; members are told</span></span><span class="t"><button class="btn">Delete the team</button></span></div>
+   <p class="time" style="margin:8px 0 0 16px">When ts12 ends, scans stop 14 days later, and BOB's data is deleted 180 days after the end, with an export offered first.</p>
+  </section>`;
+  return head+`
+  <section class="panel"><div class="pform">
+   <label>Team name<input class="txt" value="BOB"><span class="time">on the join page and in Discord messages</span></label>
+   <label>World<input class="txt" value="ts12.x1.europe" disabled><span class="time">one team, one world round</span></label>
+   <label><span>Team time zone ${tip('Members who choose "use the team\'s zone for this server" see times in it. Server time is always shown too.')}</span><select class="sel2"><option>Europe/Paris (CET)</option><option>Europe/London (GMT)</option><option>Europe/Prague (CET)</option><option>UTC</option></select></label>
+   <label>When a member leaves<select class="sel2"><option>tell the leaders in the app and on Discord</option><option>tell the leaders in the app</option></select></label>
+   <div class="actions wide"><button class="btn solid">Save</button></div>
+  </div></section>
+  <p class="prov">What members may see is under Permissions; Discord and exports have their own page.</p>`; },
+ integrations(){
+  const tip=tipBtn, tab=(k,l)=>[l,LEAD.itab===k,`LEAD.itab='${k}';`+LRE('integrations')];
+  const head=`<div class="crumbs">Leadership / <b>Discord and exports</b> · <span class="badge q">channels and links made up</span></div><h1>Discord and exports</h1><div class="meta"><span>BOB on ts12</span></div>${pageTabs([tab('discord','Discord'),tab('export','Exports')])}`;
+  if(LEAD.itab==='export') return head+`
+  <section class="panel"><h2>Export links <small>CSV for Google Sheets (IMPORTDATA) and the like</small></h2>
+   <div class="dtw"><table class="dt"><thead><tr><th class="pin">Name</th><th>Data</th><th>Made by</th><th>Expires</th><th>Last read</th><th class="act"></th></tr></thead><tbody>
+    <tr><td class="pin">Def sheet</td><td>Team totals</td><td>Král Králíčků</td><td class="nw">Sun 22 Nov <span class="time">in 28 days</span></td><td class="time">today, 08:00</td><td class="act"><span class="actions"><button class="btn">Copy link</button><button class="btn">Revoke</button></span></td></tr>
+    <tr><td class="pin">Incoming for leaders</td><td>Incoming list with waves</td><td>SwR</td><td class="nw"><span class="neg">Thu 29 Oct</span> <span class="time">in 4 days</span></td><td class="time">today, 21:30</td><td class="act"><span class="actions"><button class="btn">Renew</button><button class="btn">Revoke</button></span></td></tr>
+    <tr><td class="pin">Roster</td><td>Team roster</td><td>Král Králíčků</td><td class="nw muted">expired Fri 23 Oct</td><td class="time">Fri 23 Oct</td><td class="act"><span class="actions"><button class="btn">Renew</button><button class="btn">Delete</button></span></td></tr>
+   </tbody></table></div></section>
+  <section class="panel"><h2>New export link</h2><div class="pform">
+   <label>Name<input class="txt" placeholder="e.g. Def sheet"></label>
+   <label>Data<select class="sel2"><option>Team totals (troops, defence, offence)</option><option>Incoming list with waves, hero and watch columns</option><option>Team roster (members who agreed)</option><option disabled>Trade-route schedule (Phase 2)</option><option disabled>Region changes per day (regional worlds only)</option></select></label>
+   <label>Expires after<select class="sel2"><option>7 days</option><option>14 days</option><option selected>30 days</option></select></label>
+   <div class="actions wide"><button class="btn solid">Make the link</button></div></div>
+   <div class="warnbox" style="margin-top:10px"><span>A link works for 30 days at most and stops if you leave BOB or lose your rank. After a renewal, paste the new link into the sheet.</span></div>
+  </section>`;
+  const R=LEAD.rule, rules=[
+   ['call','New defence call','#def-calls','the members who can make it',[['Keep the message up to date',1],['🔴 for priority 1',1]]],
+   ['callrem','Defence call reminder','#def-calls','the members who can make it',[]],
+   ['push','New push request','#pushes','the members who owe',[['Keep the message up to date',1]]],
+   ['pushrem','Push reminder','#pushes','the members who owe',[]],
+   ['digest','Open calls, once a day','#def-calls','nobody',[['at 08:00 server time',0]]],
+   ['left','A member left the team or BOB','#leaders','nobody',[]],
+   ['inc','Incoming attack declared',null,null,[]]];
+  const CH=['#def-calls','#pushes','#leaders','—'];
+  const prev={call:"🔴 **Defence call: Hold Bertíkov** (impact)\nBertíkov (-54|-128) · Král Králíčků · BOB\nLands Mon 26 Oct, 01:47:04 server time\nStill needed: 7,980 of 30,000 defence\nCatapults expected, bring anti-cavalry. Wall is level 18.\nPledge: https://toolboxtravian.com/t/bob/calls/hold-bertikov\n@def",
+   callrem:"⏰ **Hold Bertíkov** still needs 7,980 defence\nLands Mon 26 Oct, 01:47:04 server time (in 4 h 05 min)\nPledge: https://toolboxtravian.com/t/bob/calls/hold-bertikov\n@def",
+   push:"**Push: Hospital Maxvelas** · 100,000 resources\nto Food Storage (-53|-130) · due Wed 28 Oct, 12:00\nYour share is on your Today page.\n@BOB",
+   pushrem:"⏰ **Hospital Maxvelas** still misses 41,000\nStill owe: Bakichuu 6,000 · Troll 5,000 · …\n@Bakichuu @Troll",
+   digest:"**Open calls, Mon 26 Oct** (2)\n🔴 Hold Bertíkov · 7,980 needed · lands 01:47:04\nBOB for Wild Club · 3,440 needed · lands 11:14:00",
+   left:"Pipka left the team (by themselves), Sun 25 Oct, 21:10"};
+  const VARS={call:['name','village','x|y','player','alliance','type','lands','needed','requested','note','link','tags'],callrem:['name','lands','in','needed','link','tags'],push:['name','amount','village','x|y','due','link','tags'],pushrem:['name','missing','owe','tags'],digest:['date','count','calls'],left:['player','how','when']};
+  const ed=rules.find(r=>r[0]===R&&r[2]);
+  return head+`
+  <section class="panel"><h2>Channels <small>a Discord webhook per channel: Channel settings › Integrations › Webhooks</small></h2>
+   <div class="crow"><span class="who"><span><b>#def-calls</b> <span class="pos">works</span></span><span class="time">last post today, 21:40</span></span><span class="t"><span class="actions"><button class="btn">Test</button><button class="btn">Remove</button></span></span></div>
+   <div class="crow"><span class="who"><span><b>#pushes</b> <span class="pos">works</span></span><span class="time">last post Sat 24 Oct, 18:02</span></span><span class="t"><span class="actions"><button class="btn">Test</button><button class="btn">Remove</button></span></span></div>
+   <div class="crow"><span class="who"><span><b>#leaders</b> <span class="neg">switched off</span></span><span class="time">failed 3 times on Sun 25 Oct: the webhook was deleted in Discord</span></span><span class="t"><button class="btn solid">Paste a new webhook</button></span></div>
+   <div class="pform" style="margin-top:10px"><label class="wide">Add a channel<input class="txt" placeholder="https://discord.com/api/webhooks/…" aria-label="Discord webhook link"><span class="time">only discord.com webhook links; Toolbox posts only what is switched on below</span></label></div>
+  </section>
+  <section class="panel"><h2>What goes where <small>messages in <select class="sel2 sm" aria-label="Language of Discord messages"><option>English</option><option>Čeština</option><option>Français</option><option>Deutsch</option></select></small></h2>
+   <div class="dtw"><table class="dt"><thead><tr><th class="pin">Event</th><th>Channel</th><th>Tag ${tip('Only the roles and members listed here are ever mentioned; names in messages never ping anyone.')}</th><th>Options</th><th class="act"></th></tr></thead><tbody>
+   ${rules.map(r=>r[2]?`<tr${r[0]===R?' class="pick on"':''}><td class="pin">${r[1]}${r[0]==='digest'?' <span class="badge q">proposal</span>':''}</td><td><select class="sel2 sm" aria-label="Channel for ${r[1]}">${CH.map(c=>`<option${c===r[2]?' selected':''}>${c}</option>`).join('')}</select></td><td><select class="sel2 sm" aria-label="Tag for ${r[1]}"><option>${r[3]}</option><option>everyone</option><option>@def</option><option>nobody</option></select></td><td><div class="pchecks">${r[4].map(o=>`<label class="nw"><input type="checkbox"${o[1]?' checked':''}> ${o[0]}</label>`).join('')}</div></td><td class="act"><button class="btn${r[0]===R?' solid':''}" onclick="LEAD.rule='${r[0]}';${LRE('integrations')}">Message</button></td></tr>`
+    :`<tr><td class="pin muted">${r[1]}</td><td colspan="4" class="time">waits for Travian's answer on posting attacks to Discord (open question Q5)</td></tr>`).join('')}
+   </tbody></table></div></section>
+  <section class="panel" id="discmsg"><h2>Message: ${ed[1]} <small>placeholders in braces</small></h2>
+   <div class="pform"><label class="wide">Text<textarea class="txt" rows="5" style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">${esc({call:'{priority} **Defence call: {name}** ({type})\n{village} ({x|y}) · {player} · {alliance}\nLands {lands}\nStill needed: {needed} of {requested} defence\n{note}\nPledge: {link}\n{tags}',callrem:'⏰ **{name}** still needs {needed} defence\nLands {lands} (in {in})\nPledge: {link}\n{tags}',push:'**Push: {name}** · {amount} resources\nto {village} ({x|y}) · due {due}\nYour share is on your Today page.\n{tags}',pushrem:'⏰ **{name}** still misses {missing}\nStill owe: {owe}\n{tags}',digest:'**Open calls, {date}** ({count})\n{calls}',left:'{player} left the team ({how}), {when}'}[R])}</textarea></label>
+   <div class="wide"><span class="time">Placeholders:</span> ${VARS[R].map(v=>`<span class="flag">{${v}}</span>`).join('')}</div>
+   <div class="wide mdprev"><span class="time">Preview, with Hold Bertíkov and today's push</span><pre>${esc(prev[R])}</pre></div>
+   <div class="actions wide"><button class="btn solid">Save</button><button class="btn">Back to the default</button><button class="btn">Send a test</button></div></div>
+  </section>
+  <p class="prov">Names go into messages as plain text, so an enemy's village name cannot ping or link anything. Toolbox edits its own message as a call or push fills, at most every 5 seconds.</p>`; },
+ perms(){
+  const tip=tipBtn, ar=LEAD.archon==='leader', full=LEAD.vis==='full';
+  const col=[['perioeci',2],['spartan',3],['lochagos',4],['polemarch',5],['archon',ar?7:6],['ephor',7]];
+  const cell=v=>v==='y'?'<span class="pos" aria-label="yes">✓</span>':v==='-'?'<span class="zero" aria-label="no">–</span>':v==='tot'?(full?'<span class="pos" aria-label="yes">✓</span>':'totals'):esc(v);
+  const ephor=(row,v)=>row[1].includes(2)?cell(v)+'<span class="sub2" style="display:block">the owner: all ranks</span>':row[1].includes(6)?cell(v)+'<span class="sub2" style="display:block">the owner: everyone</span>':cell(v);
+  const seg=(k,opts)=>`<span class="seg">${opts.map(([v,l])=>`<button class="${LEAD[k]===v?'on':''}" onclick="LEAD.${k}='${v}';${LRE('perms')}">${l}</button>`).join('')}</span>`;
+  return `<div class="crumbs">Leadership / <b>Permissions</b></div><h1>Permissions</h1><div class="meta"><span>BOB on ts12</span><span>this table is public too, at toolboxtravian.com/roles</span></div>
+  <section class="panel"><div class="pchecks" style="gap:10px 28px">
+   <span class="permopt">Archon counts as ${seg('archon',[['leader','a leader'],['coord','a coordinator']])} ${tip('v2\'s Archon was a strategic adviser; teams used the rank both ways. As a coordinator, an Archon coordinates both defence and attacks.')}</span>
+   <span class="permopt">Spartans see the team's troops as ${seg('vis',[['totals','totals'],['full','full tables']])} ${tip('Totals by default, as the plan proposes: a spy who joins sees team sums, not who holds what where. Open question 19.')}</span></div></section>
+  <section class="panel"><div class="dtw"><table class="dt permt"><thead><tr><th class="pin">May</th>${col.map(([k])=>`<th class="c">${rankName(k)}<span class="sub2" style="display:block;font-weight:400">${rankPreset(k)}</span></th>`).join('')}<th class="c">Guest<span class="sub2" style="display:block;font-weight:400">allied coordinator, Phase 2</span></th></tr></thead><tbody>
+   ${PERMS.map(([g,rows])=>`<tr class="grp"><td colspan="8"><b>${g}</b></td></tr>`+rows.map(row=>`<tr><td class="pin">${row[0]}</td>${col.map(([k,i])=>`<td class="c">${k==='ephor'?ephor(row,row[i]):k==='archon'&&row[1].includes(3)?cell('-'):cell(row[i])}</td>`).join('')}<td class="c">${cell(row[8])}</td></tr>`).join('')).join('')}
+   </tbody></table></div></section>
+  <section class="panel"><h2>Always, whatever the rank</h2>
+   <div class="crow"><span class="who"><span>A sitter never takes a rank: sitters see their own data, answer calls and pledge.</span></span></div>
+   <div class="crow"><span class="who"><span>Until an avatar is verified or attested, its player sees only their own data.</span></span></div>
+   <div class="crow"><span class="who"><span>A suspension works at once. Suspending an Archon or an Ephor needs the owner.</span></span></div>
+   <div class="crow"><span class="who"><span>The last member who can give ranks cannot give that up, and anyone stepping down from Ephor or Archon is asked to confirm.</span></span></div>
+  </section>
+  <p class="prov">Changing a single cell for a rank comes in Phase 2: per rank, never per person, and the rules above always come first. "totals" means team sums without who or where.</p>`; },
+ sharing(){
+  const cats=[['Defence calls',1,1],['Push requests',1,0],['Troops, team totals',1,1],['Troops per village',0,0],['Team dashboard',0,0],['Reports',0,1],['Attack plans',0,0],['Statistics and rankings',1,1],['Top-10 tracking',0,0],['Trade routes',1,1],['Map markers',1,0]];
+  return `<div class="crumbs">Leadership / <b>Sharing with allied teams</b> · <span class="badge q">Phase 2, a sketch</span></div><h1>Sharing with allied teams</h1><div class="meta"><span>BOB on ts12</span></div>
+  <section class="panel"><h2>Allied teams</h2>
+   <div class="crow"><span class="who"><span><b>LA</b> · the team of LA, BOB's confederacy</span><span class="time">accepted by both leaders on Tue 20 Oct · each side chooses what it shows</span></span><span class="t"><button class="btn">Stop sharing</button></span></div>
+   <div class="pform" style="margin-top:10px"><label>Ask another team<input class="txt" placeholder="alliance tag or team name"></label><div class="actions" style="align-self:end"><button class="btn solid">Ask</button></div></div>
+  </section>
+  <section class="panel"><h2>With LA <small>read only on the other side; every change goes to the audit log</small></h2>
+   <div class="dtw"><table class="dt"><thead><tr><th class="pin">Data</th><th class="c">BOB shows LA</th><th class="c">LA shows BOB</th></tr></thead><tbody>
+   ${cats.map(c=>`<tr><td class="pin">${c[0]}</td><td class="c"><input type="checkbox"${c[1]?' checked':''} aria-label="BOB shows LA: ${c[0]}"></td><td class="c">${c[2]?'<span class="pos">✓</span>':'<span class="zero">–</span>'}</td></tr>`).join('')}
+   </tbody></table></div></section>
+  <p class="prov">The categories follow v2's sharing (research/14 §5.2) and the owner's list (docs/06). LA's coordinators can join BOB as guests to answer its calls. Designed in full when sharing ships.</p>`; },
+ audit(){
+  const rows=AUDIT.filter(a=>(LEAD.af==='all'||a[4]===LEAD.af)&&(LEAD.actor==='all'||a[1]===LEAD.actor)), actors=[...new Set(AUDIT.map(a=>a[1]))];
+  return `<div class="crumbs">Leadership / <b>Audit and team events</b> · <span class="badge q">events made up</span></div><h1>Audit and team events</h1><div class="meta"><span>BOB on ts12</span><span>server time</span></div>
+  <section class="panel"><div class="pchecks" style="margin:0 0 10px"><span class="pg2">${Object.entries(AUDIT_G).map(([k,l])=>`<button class="chip${LEAD.af===k?' on':''}" onclick="LEAD.af='${k}';${LRE('audit')}">${l}</button>`).join('')}</span><label class="nw">Who <select class="sel2 sm" onchange="LEAD.actor=this.value;${LRE('audit')}" aria-label="Who did it"><option value="all">anyone</option>${actors.map(a=>`<option${LEAD.actor===a?' selected':''}>${esc(a)}</option>`).join('')}</select></label><input class="txt" style="width:180px" placeholder="player, village or call" aria-label="Search the log"><button class="btn">Download CSV</button></div>
+   <div class="dtw"><table class="dt"><thead><tr><th>When</th><th>Who</th><th>What</th><th>Details</th></tr></thead><tbody>
+   ${rows.map(a=>`<tr><td class="nw time">${a[0]}</td><td class="nw">${a[1]==='Toolbox'?'<span class="muted">Toolbox</span>':esc(a[1])}</td><td class="nw">${a[2]} <span class="flag">${AUDIT_G[a[4]]}</span></td><td style="white-space:normal;min-width:220px">${esc(a[3])}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">Nothing matches.</td></tr>'}
+   </tbody></table></div></section>
+  <p class="prov">Kept 24 months; nobody can change or delete it. Lochagoi see only defence-call events, Polemarchs only attack plans. A deleted account shows as "a former member".</p>`; },
  today(){
   // Illustrative scenario at 21:42:00 ST, Král Králíčků's real villages on ts12 (x1). Travel times follow docs/05 §5.2:
   // Praetorian speed 5, Equites Caesaris 10; Pepíkov has TS 8, every other village is under 20 fields away so TS does not count.
