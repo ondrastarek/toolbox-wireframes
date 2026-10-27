@@ -1270,21 +1270,22 @@ const V = {
    <div class="warnbox" style="margin-top:10px"><span>A link works for 30 days at most and stops if you leave BOB or lose your rank. After a renewal, paste the new link into the sheet.</span></div>
   </section>`;
   const R=LEAD.rule, rules=[
+   ['inc','Incoming attack declared','#def-calls','the attacked member',[['One message per village, kept up to date',1]]],
    ['call','New defence call','#def-calls','the members who can make it',[['Keep the message up to date',1],['🔴 for priority 1',1]]],
    ['callrem','Defence call reminder','#def-calls','the members who can make it',[]],
    ['push','New push request','#pushes','the members who owe',[['Keep the message up to date',1]]],
    ['pushrem','Push reminder','#pushes','the members who owe',[]],
    ['digest','Open calls, once a day','#def-calls','nobody',[['at 08:00 server time',0]]],
-   ['left','A member left the team or BOB','#leaders','nobody',[]],
-   ['inc','Incoming attack declared',null,null,[]]];
+   ['left','A member left the team or BOB','#leaders','nobody',[]]];
   const CH=['#def-calls','#pushes','#leaders','—'];
   const prev={call:"🔴 **Defence call: Hold Bertíkov** (impact)\nBertíkov (-54|-128) · Král Králíčků · BOB\nLands Mon 26 Oct, 01:47:04 server time\nStill needed: 7,980 of 30,000 defence\nCatapults expected, bring anti-cavalry. Wall is level 18.\nPledge: https://toolboxtravian.com/t/bob/calls/hold-bertikov\n@def",
    callrem:"⏰ **Hold Bertíkov** still needs 7,980 defence\nLands Mon 26 Oct, 01:47:04 server time (in 4 h 05 min)\nPledge: https://toolboxtravian.com/t/bob/calls/hold-bertikov\n@def",
    push:"**Push: Hospital Maxvelas** · 100,000 resources\nto Food Storage (-53|-130) · due Wed 28 Oct, 12:00\nYour share is on your Today page.\n@BOB",
    pushrem:"⏰ **Hospital Maxvelas** still misses 41,000\nStill owe: Bakichuu 6,000 · Troll 5,000 · …\n@Bakichuu @Troll",
    digest:"**Open calls, Mon 26 Oct** (2)\n🔴 Hold Bertíkov · 7,980 needed · lands 01:47:04\nBOB for Wild Club · 3,440 needed · lands 11:14:00",
-   left:"Pipka left the team (by themselves), Sun 25 Oct, 21:10"};
-  const VARS={call:['name','village','x|y','player','alliance','type','lands','needed','requested','note','link','tags'],callrem:['name','lands','in','needed','link','tags'],push:['name','amount','village','x|y','due','link','tags'],pushrem:['name','missing','owe','tags'],digest:['date','count','calls'],left:['player','how','when']};
+   left:"Pipka left the team (by themselves), Sun 25 Oct, 21:10",
+   inc:"⚔️ **Incoming on Vepříkov** (-53|-127) · Král Králíčků\nNomad (RUS) from Т-1000 (-180|-10)\n3 waves land Sun 25 Oct, 22:51:00 server time\nDeclared by Král Králíčků with a scan, 21:30\nSee it: https://toolboxtravian.com/t/bob/incoming\n@Král Králíčků"};
+  const VARS={inc:['village','x|y','defender','attacker','alliance','from','from x|y','waves','lands','declared by','link','tags'],call:['name','village','x|y','player','alliance','type','lands','needed','requested','note','link','tags'],callrem:['name','lands','in','needed','link','tags'],push:['name','amount','village','x|y','due','link','tags'],pushrem:['name','missing','owe','tags'],digest:['date','count','calls'],left:['player','how','when']};
   const ed=rules.find(r=>r[0]===R&&r[2]);
   return head+`
   <section class="panel"><h2>Channels <small>a Discord webhook per channel: Channel settings › Integrations › Webhooks</small></h2>
@@ -1296,12 +1297,12 @@ const V = {
   <section class="panel"><h2>What goes where <small>messages in <select class="sel2 sm" aria-label="Language of Discord messages"><option>English</option><option>Čeština</option><option>Français</option><option>Deutsch</option></select></small></h2>
    <div class="dtw"><table class="dt"><thead><tr><th class="pin">Event</th><th>Channel</th><th>Tag ${tip('Only the roles and members listed here are ever mentioned; names in messages never ping anyone.')}</th><th>Options</th><th class="act"></th></tr></thead><tbody>
    ${rules.map(r=>r[2]?`<tr${r[0]===R?' class="pick on"':''}><td class="pin">${r[1]}${r[0]==='digest'?' <span class="badge q">proposal</span>':''}</td><td><select class="sel2 sm" aria-label="Channel for ${r[1]}">${CH.map(c=>`<option${c===r[2]?' selected':''}>${c}</option>`).join('')}</select></td><td><select class="sel2 sm" aria-label="Tag for ${r[1]}"><option>${r[3]}</option><option>everyone</option><option>@def</option><option>nobody</option></select></td><td><div class="pchecks">${r[4].map(o=>`<label class="nw"><input type="checkbox"${o[1]?' checked':''}> ${o[0]}</label>`).join('')}</div></td><td class="act"><button class="btn${r[0]===R?' solid':''}" onclick="LEAD.rule='${r[0]}';${LRE('integrations')}">Message</button></td></tr>`
-    :`<tr><td class="pin muted">${r[1]}</td><td colspan="4" class="time">waits for Travian's answer on posting attacks to Discord (open question Q5)</td></tr>`).join('')}
+    :'').join('')}
    </tbody></table></div></section>
   <section class="panel" id="discmsg"><h2>Message: ${ed[1]} <small>placeholders in braces</small></h2>
-   <div class="pform"><label class="wide">Text<textarea class="txt" rows="5" style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">${esc({call:'{priority} **Defence call: {name}** ({type})\n{village} ({x|y}) · {player} · {alliance}\nLands {lands}\nStill needed: {needed} of {requested} defence\n{note}\nPledge: {link}\n{tags}',callrem:'⏰ **{name}** still needs {needed} defence\nLands {lands} (in {in})\nPledge: {link}\n{tags}',push:'**Push: {name}** · {amount} resources\nto {village} ({x|y}) · due {due}\nYour share is on your Today page.\n{tags}',pushrem:'⏰ **{name}** still misses {missing}\nStill owe: {owe}\n{tags}',digest:'**Open calls, {date}** ({count})\n{calls}',left:'{player} left the team ({how}), {when}'}[R])}</textarea></label>
+   <div class="pform"><label class="wide">Text<textarea class="txt" rows="5" style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">${esc({inc:'⚔️ **Incoming on {village}** ({x|y}) · {defender}\n{attacker} ({alliance}) from {from} ({from x|y})\n{waves} waves land {lands}\nDeclared by {declared by} with a scan\nSee it: {link}\n{tags}',call:'{priority} **Defence call: {name}** ({type})\n{village} ({x|y}) · {player} · {alliance}\nLands {lands}\nStill needed: {needed} of {requested} defence\n{note}\nPledge: {link}\n{tags}',callrem:'⏰ **{name}** still needs {needed} defence\nLands {lands} (in {in})\nPledge: {link}\n{tags}',push:'**Push: {name}** · {amount} resources\nto {village} ({x|y}) · due {due}\nYour share is on your Today page.\n{tags}',pushrem:'⏰ **{name}** still misses {missing}\nStill owe: {owe}\n{tags}',digest:'**Open calls, {date}** ({count})\n{calls}',left:'{player} left the team ({how}), {when}'}[R])}</textarea></label>
    <div class="wide"><span class="time">Placeholders:</span> ${VARS[R].map(v=>`<span class="flag">{${v}}</span>`).join('')}</div>
-   <div class="wide mdprev"><span class="time">Preview, with Hold Bertíkov and today's push</span><pre>${esc(prev[R])}</pre></div>
+   <div class="wide mdprev"><span class="time">Preview, with today's examples</span><pre>${esc(prev[R])}</pre></div>
    <div class="actions wide"><button class="btn solid">Save</button><button class="btn">Back to the default</button><button class="btn">Send a test</button></div></div>
   </section>
   <p class="prov">Names go into messages as plain text, so an enemy's village name cannot ping or link anything. Toolbox edits its own message as a call or push fills, at most every 5 seconds.</p>`; },
