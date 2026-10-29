@@ -578,7 +578,7 @@ function renderNav(){ const r=(location.hash||'#today').slice(1), cur=navOfRoute
  const tabArea={today:'today',ops:'ops',team:'team',world:'world',tools:'more',my:'more',lead:'more'}[cur?cur.a.id:'']||(r==='more'?'more':'');
  document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.area===tabArea));
  const tc=document.getElementById('teamchip'); if(tc) tc.style.display=VIEWAS==='visitor'?'none':''; const acc=document.getElementById('acct'); if(acc) acc.innerHTML=VIEWAS==='visitor'?`<button class="btn" onclick="setViewAs('member')">Sign in</button>`
-  :`<details class="acct"><summary class="chip">Král Králíčků ▾</summary><div class="amenu"><a href="#account" onclick="ACCTAB='av'">My Travian avatars and teams</a><a href="#account" onclick="ACCTAB='pref'">Preferences and password</a><a href="#account" onclick="ACCTAB='br'">Set up the extension</a><a href="#account" onclick="ACCTAB='priv'">Privacy and my data</a><a onclick="setViewAs('visitor')">Sign out</a></div></details>`;
+  :`<details class="acct"><summary class="chip">Král Králíčků ▾</summary><div class="amenu"><a href="#account" onclick="ACCTAB='av'">Your account</a><a onclick="setViewAs('visitor')">Sign out</a></div></details>`;
  const vw=document.getElementById('viewas'); if(vw) vw.innerHTML=['visitor','member','leader'].map(v=>`<button class="${VIEWAS===v?'on':''}" onclick="setViewAs('${v}')">${{visitor:'Visitor',member:'Member',leader:'Leader'}[v]}</button>`).join(''); }
 function toggleRail(){ document.body.classList.toggle('norail'); render(); }
 function setViewAs(v){ VIEWAS=v; NAVOPEN=null; FSIGNED=v!=='visitor'; CALC.signed=v!=='visitor'; PVIEW=v==='leader'?'leader':'member';
