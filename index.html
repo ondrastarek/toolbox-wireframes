@@ -387,6 +387,7 @@ body.norail .shell{grid-template-columns:minmax(0,1fr);max-width:none}body.norai
 .apcorner{display:flex;flex-direction:column;align-items:flex-start;gap:4px}.apcorner .chip{font-size:12px}
 .vtag{display:inline-block;font-size:10.5px;font-weight:600;padding:0 5px;border-radius:4px;margin-left:4px;background:color-mix(in srgb,var(--f4) 16%,var(--surface));border:1px solid color-mix(in srgb,var(--f4) 40%,var(--line));color:var(--text);white-space:nowrap}.aptg .vtag:first-child{margin-left:0;margin-right:4px}.flags .vtag{margin:0 4px 2px 0}
 .apviewsw{margin-left:auto}.apviewsw button{font-size:14px;font-weight:700;padding:7px 16px}
+.apdockbar .btn.apdockt{font-size:18px;line-height:1;padding:5px 16px;min-width:52px;font-weight:700}
 .apdrow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:0 0 4px}.apdrow .apnotef{flex:1 1 280px;flex-direction:row;align-items:center;gap:6px;margin:0}.apdrow .apnotef .txt{flex:1;max-width:none}.apdrow .acts2{display:flex;gap:6px;align-items:center}
 .apdock .dt td .sub2{display:inline!important;margin-left:6px}.apdock{max-height:34vh}
 @media (max-width:600px){.apdock{max-height:50vh}}
@@ -2249,7 +2250,7 @@ ${listPart}
      <div class="actions"><button class="btn" onclick="apAskTakeOut('${a.id}')">Take out of the plan</button></div>`; }
    else sub='click a cell, target or attacker · several: drag, or Ctrl/⌘- or Shift-click';
    const any=many||AP.pt;
-   return `<div class="apdock${AP.dockMin?' min':''}" id="apdock" role="region" aria-label="Details"><div class="in"><div class="apdockbar">${AP.pt==='tgt'&&AP.back&&AP.back.endsWith('|'+AP.pid)?`<button class="btn" onclick="apPick(AP.back);${re}">‹ Back to the cell</button>`:''}<b>${esc(title)}</b>${sub?`<span class="time">${sub}</span>`:''}<span class="acts"><button class="btn" aria-expanded="${!AP.dockMin}" aria-label="${AP.dockMin?'Open the details':'Collapse the details'}" onclick="AP.dockMin=!AP.dockMin;${re}">${AP.dockMin?'▴':'▾'}</button></span></div>${AP.dockMin||!body?'':`<div class="apdockbody">${body}</div>`}</div></div>`; })();
+   return `<div class="apdock${AP.dockMin?' min':''}" id="apdock" role="region" aria-label="Details"><div class="in"><div class="apdockbar">${AP.pt==='tgt'&&AP.back&&AP.back.endsWith('|'+AP.pid)?`<button class="btn" onclick="apPick(AP.back);${re}">‹ Back to the cell</button>`:''}<b>${esc(title)}</b>${sub?`<span class="time">${sub}</span>`:''}<span class="acts"><button class="btn apdockt" aria-expanded="${!AP.dockMin}" aria-label="${AP.dockMin?'Open the details':'Collapse the details'}" onclick="AP.dockMin=!AP.dockMin;${re}">${AP.dockMin?'▴':'▾'}</button></span></div>${AP.dockMin||!body?'':`<div class="apdockbody">${body}</div>`}</div></div>`; })();
   // one big table (Poll's fifth review, 12 Nov 2026): every attacker × every target, attackers ordered by group under a group header;
   // targets belong to one or more groups, and a cell whose target is not in that attacker's group is hatched
   const GL=[...new Set(R.map(a=>a.g).filter(Boolean))].sort(), tgr=t=>t.gr||[], ung=R.some(a=>!a.g)||T.some(t=>!tgr(t).length);
